@@ -1,32 +1,51 @@
 <template>
-  <div class="flex h-screen">
+  <div class="flex h-screen w-screen">
+    <!-- Single Image Section -->
     <div class="flex-1 flex justify-center items-center bg-gray-200 overflow-hidden">
-      <el-image
-        class="w-full h-full object-cover"
-        :src="welcomeComponent.coverImage"
-        fit="cover"
-        lazy
+      <img
+        class="single-image"
+        :src="currentImage"
+        alt="Background"
       />
     </div>
-    <div class="flex-1 flex flex-col justify-center items-center text-center bg-white p-5">
-      <div class="mb-5">
-        <el-image class="w-48 h-auto" :src="welcomeComponent.brand" fit="cover" lazy />
-      </div>
-      <span class="text-5xl mb-5">Benvenuto!</span>
 
-      <ButtonBig
+    <!-- Right Content Section -->
+    <div class="flex-1 flex flex-col justify-center items-center text-center bg-white p-5">
+      <!-- Animated Logo -->
+      <div class="logo-container mb-5">
+        <el-image
+          class="responsive-logo"
+          :src="welcomeComponent.brand"
+          fit="contain"
+          lazy
+        />
+      </div>
+
+      <!-- Welcome Text with Fade-In Effect -->
+      <span class="welcome-text text-5xl mb-5 transition-opacity duration-1000 ease-in-out">Benvenuto!</span>
+
+      <!-- Animated Button with Hover Effect -->
+      <AnimatedButton
+        class="animated-button"
         title="Avvio"
         :onClick="welcomeComponent.goToPage"
+        aria-label="Start"
       />
-
     </div>
   </div>
 </template>
 
-
 <script lang="ts" setup>
+import { ref } from 'vue';
 import { useWelcomeComponent } from './index';
-import ButtonBig from '../../components/ButtonBig.vue';
+import AnimatedButton from '../../components/AnimatedButton.vue';
 
+// Initialize the welcome component
 const welcomeComponent = useWelcomeComponent();
+const images = welcomeComponent.images;
+
+// Select a random image from the list on page load
+const currentImage = ref(images[Math.floor(Math.random() * images.length)]);
 </script>
+
+<style src="./WelcomePage.css" scoped></style>

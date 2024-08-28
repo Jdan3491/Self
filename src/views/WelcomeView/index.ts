@@ -1,6 +1,7 @@
 import { useRouter } from 'vue-router';
-import coverImage from '@/assets/OIG3.jfif';
-import brand from '@/assets/OIG2.jfif';
+import homeA from '@/assets/home_a.jfif';
+import homeB from '@/assets/home_b.jfif';
+import brand from '@/assets/logo.png';
 
 export function useWelcomeComponent() {
   const router = useRouter();
@@ -11,7 +12,8 @@ export function useWelcomeComponent() {
 
   return {
     goToPage,
-    coverImage,
-    brand
+    coverImage: homeA, // Placeholder; you can set a default or specific image if needed
+    brand,
+    images: [homeA, homeB] // Array of images for the carousel
   };
 }
