@@ -1,6 +1,6 @@
 # self
 
-This template should help get you started developing with Vue 3 in Vite.
+Questo è un progetto demo "CASSA AMICA"
 
 ## Recommended IDE Setup
 
