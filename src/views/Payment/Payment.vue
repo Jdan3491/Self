@@ -1,72 +1,84 @@
 <template>
-  <div class="container">
-    <h2 class="header">Metodo di Pagamento</h2>
-    
-    <!-- Total Amount Section -->
-    <div class="total-section">
-      <p class="total-text">Totale da Pagare:</p>
-      <p class="total-amount">€{{ totalAmount.toFixed(2) }}</p>
-    </div>
+  <div class="flex flex-col h-screen w-screen bg-gray-100">
+    <!-- Header Section -->
+    <header class="flex-shrink-0 text-gray-800 p-4 bg-yellow-400">
+      <h2 class="text-2xl font-bold">Metodo di Pagamento</h2>
+    </header>
 
-    <!-- Payment Method Selection -->
-    <div class="payment-methods">
-      <div 
-        v-for="method in paymentMethods"
-        :key="method.value"
-        class="method-card"
-        :class="{ 'selected': selectedMethod === method.value }"
-        @click="selectPaymentMethod(method.value)"
-      >
-        <img :src="method.icon" alt="Payment Method Icon" class="method-icon">
-        <h3 class="method-title">{{ method.label }}</h3>
+    <!-- Main Content Section -->
+    <main class="flex-grow overflow-auto p-4 flex flex-col items-center justify-center">
+      <!-- Total Amount Section -->
+      <div class="total-section text-center mb-8">
+        <p class="total-text text-xl">Totale da Pagare:</p>
+        <p class="total-amount text-4xl font-bold text-blue-600">€{{ totalAmount.toFixed(2) }}</p>
       </div>
-    </div>
 
-    <!-- Confirm and Cancel Buttons -->
-    <div class="action-buttons">
-      <el-button 
-        type="primary" 
-        class="confirm-button" 
-        @click="confirmPayment"
-        :disabled="!selectedMethod"
-      >
-        Conferma Pagamento
-      </el-button>
-      <el-button 
-        class="cancel-button" 
-        @click="cancel"
-      >
-        Annulla
-      </el-button>
-    </div>
+      <!-- Payment Method Selection -->
+      <div class="payment-methods flex flex-wrap gap-4 justify-center">
+        <div 
+          v-for="method in paymentMethods"
+          :key="method.value"
+          class="card p-4 border rounded-lg shadow-md bg-white cursor-pointer transition-transform duration-300 ease-in-out"
+          :class="{ 'border-blue-600 bg-blue-50': selectedMethod === method.value }"
+          @click="selectPaymentMethod(method.value)"
+        >
+          <img :src="imgStore.getIcon(method.value)" alt="Payment Method Icon" class="icon" />
+          <h3 class="text-lg font-semibold mt-2">{{ method.label }}</h3>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="flex-shrink-0 bg-white p-4 border-t border-gray-200 flex justify-between">
+      <AnimatedButton
+        class="cancel-button text-4xl p-4 rounded-lg shadow-md transition duration-200 ease-in-out"
+        title="Annulla"
+        :onClick="cancel"
+        aria-label="Annulla"
+      />
+      <AnimatedButton
+        class="animated-button text-4xl p-4 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-200 ease-in-out"
+        title="Conferma Pagamento"
+        :onClick="confirmPayment"
+        aria-label="Conferma Pagamento"
+      />
+    </footer>
   </div>
 </template>
+
 
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
+import AnimatedButton from '../../components/AnimatedButton.vue';
+import { useImgStore } from '@/stores/imgStore';
+import { useProductStore } from '@/stores/productStore'; // Import the product store
+
+const imgStore = useImgStore();
+const productStore = useProductStore(); // Initialize the product store
 
 // Define available payment methods
 const paymentMethods = ref([
-  { value: 'credit_card', label: 'Carta di Credito', icon: 'https://img.icons8.com/ios/50/000000/credit-card.png' },
-  { value: 'paypal', label: 'PayPal', icon: 'https://img.icons8.com/ios/50/000000/paypal.png' },
-  { value: 'cash', label: 'Contante', icon: 'https://img.icons8.com/ios/50/000000/cash.png' }
+  { value: 'creditCard', label: 'Carta di Credito' },
+  { value: 'paypalIcon', label: 'PayPal' },
+  { value: 'cash', label: 'Contante' }
 ]);
 
 // Form model to keep track of selected payment method
 const selectedMethod = ref('');
 
 // Total amount to be paid
-const totalAmount = ref(75.00); // Replace with dynamic amount
+const totalAmount = ref(productStore.totalAmountWithBags);
 
 // Router instance
 const router = useRouter();
 
 // Select payment method
 const selectPaymentMethod = (value) => {
-  selectedMethod.value = value;
+  selectedMethod.value = value; // Update the selected method
 };
+
 
 // Confirm payment
 const confirmPayment = () => {
@@ -102,99 +114,44 @@ const cancel = () => {
 </script>
 
 <style scoped>
-.container {
+.card {
+  width: 200px; /* Larghezza aumentata per una forma quadrata più grande */
+  height: 200px; /* Altezza aumentata per una forma quadrata più grande */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  width: 100vw;
-  padding: 2rem;
-  background-color: #f9fafb;
-}
-
-.header {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
-}
-
-.total-section {
-  margin-bottom: 2rem;
+  background-color: #fff; /* Mantieni il colore di sfondo bianco */
+  border: 4px solid #ffd814; /* Bordo dello stesso colore del background */
+  border-radius: 8px; /* Raggio del bordo arrotondato */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ombra leggera */
   text-align: center;
-}
-
-.total-text {
-  font-size: 1.25rem;
-}
-
-.total-amount {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #1d4ed8;
-}
-
-.payment-methods {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.method-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 12rem;
-  height: 15rem;
+  padding: 1.5rem; /* Spaziatura interna */
   cursor: pointer;
-  background-color: #ffffff;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s, box-shadow 0.2s; /* Transizione per interazioni */
 }
 
-.method-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+.card:hover {
+  transform: translateY(-2px); /* Leggero movimento verso l'alto al passaggio del mouse */
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* Ombra più profonda al passaggio del mouse */
 }
 
-.method-card.selected {
-  border-color: #1d4ed8;
-  background-color: #f0faff;
+.card:focus {
+  outline: none;
+  border: 2px solid #ffd814; /* Mantieni il bordo dello stesso colore del background */
 }
 
-.method-icon {
-  width: 4rem;
-  height: 4rem;
-  margin-bottom: 1rem;
+.border-blue-600 {
+  border-color: #1d4ed8 !important; /* Blue border color when selected */
 }
 
-.method-title {
-  font-size: 1.125rem;
-  font-weight: bold;
+.bg-blue-50 {
+  background-color: #f0faff !important; /* Light blue background when selected */
 }
 
-.action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 100%;
-  max-width: 30rem;
-}
-
-.confirm-button {
-  width: 100%;
-  font-size: 1rem;
-}
-
-.cancel-button {
-  width: 100%;
-  font-size: 1rem;
-  border: 1px solid #e5e7eb;
+.icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 0.75rem;
 }
 </style>

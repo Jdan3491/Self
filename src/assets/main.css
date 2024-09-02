@@ -1,3 +1,162 @@
-body{
+body {
       font-family: 'Lato', sans-serif !important;
+      margin: 0 !important;
+      padding: 0 !important;
+}
+
+/* Stile globale per il pulsante di conferma di SweetAlert2 */
+.swal2-confirm {
+      background-color: #22C55E;
+      /* Colore di sfondo arancione */
+      color: #fff;
+      /* Colore del testo bianco */
+      border: none;
+      /* Nessun bordo */
+      padding: 10px 20px;
+      /* Spaziatura interna */
+      font-size: 16px;
+      /* Dimensione del font */
+      border-radius: 5px;
+      /* Angoli arrotondati */
+      cursor: pointer;
+      /* Cambia il cursore al passaggio del mouse */
+      box-shadow: 0 4px 8px rgba(42, 18, 18, 0.2);
+      /* Ombra leggera */
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      /* Transizione per interazioni */
+}
+
+/* Hover state per il pulsante di conferma */
+.swal2-confirm:hover {
+      background-color: #16a34a;
+      /* Colore di sfondo arancione più scuro al passaggio del mouse */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      /* Ombra più profonda al passaggio del mouse */
+}
+
+/* Stile globale per il pulsante di annullamento di SweetAlert2 */
+.swal2-cancel {
+      background-color: #808080;
+      /* Colore di sfondo grigio */
+      color: #fff;
+      /* Colore del testo bianco */
+      border: none;
+      /* Nessun bordo */
+      padding: 10px 20px;
+      /* Spaziatura interna */
+      font-size: 16px;
+      /* Dimensione del font */
+      border-radius: 5px;
+      /* Angoli arrotondati */
+      cursor: pointer;
+      /* Cambia il cursore al passaggio del mouse */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      /* Ombra leggera */
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      /* Transizione per interazioni */
+}
+
+/* Hover state per il pulsante di annullamento */
+.swal2-cancel:hover {
+      background-color: #6e6e6e;
+      /* Colore di sfondo grigio più scuro al passaggio del mouse */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      /* Ombra più profonda al passaggio del mouse */
+}
+.animated-button {
+      /* Bright orange background */
+      border: none;
+      color: #fff;
+      /* White text color */
+      border-radius: 50px;
+      /* Fully rounded corners */
+      width: 100%;
+      /* Full width for responsiveness */
+      max-width: 400px;
+      /* Max width for larger screens */
+      line-height: 1.5;
+      /* Ensure vertical alignment */
+      text-align: center;
+      /* Center the text horizontally */
+      box-shadow: 0 4px 8px rgba(42, 18, 18, 0.2);
+      /* Subtle shadow for depth */
+      transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+      /* Smooth transition effects */
+      cursor: pointer;
+      /* Pointer cursor for clickability */
+}
+
+.animated-button:hover {
+      transform: translateY(-6px);
+      /* Slightly darker orange on hover */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      /* Enhanced shadow on hover */
+}
+
+.animated-button:active {
+      transform: translateY(-2px);
+      /* Slightly smaller lift on click */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      /* Reduced shadow on click */
+}
+
+.cancel-button {
+      background: #808080;
+      /* Bright orange background */
+      border: none;
+      color: #fff;
+      /* White text color */
+      border-radius: 50px;
+      /* Fully rounded corners */
+      width: 100%;
+      /* Full width for responsiveness */
+      max-width: 400px;
+      /* Max width for larger screens */
+      line-height: 1.5;
+      /* Ensure vertical alignment */
+      text-align: center;
+      /* Center the text horizontally */
+      box-shadow: 0 4px 8px rgba(42, 18, 18, 0.2);
+      /* Subtle shadow for depth */
+      transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+      /* Smooth transition effects */
+      cursor: pointer;
+      /* Pointer cursor for clickability */
+}
+
+.cancel-button:hover {
+      transform: translateY(-6px);
+      /* More pronounced lift on hover */
+      background-color: #6e6e6e;
+      /* Slightly darker orange on hover */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      /* Enhanced shadow on hover */
+}
+
+.cancel-button:active {
+      transform: translateY(-2px);
+      /* Slightly smaller lift on click */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      /* Reduced shadow on click */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+
+      .animated-button,
+      .cancel-button {
+            font-size: 1rem;
+      }
+}
+
+@media (min-width: 1200px) {
+
+      .animated-button,
+      .cancel-button {
+            font-size: 1.25rem;
+            /* Adjust text size for larger screens */
+            max-width: 500px;
+            /* Wider button for larger screens */
+      }
 }

@@ -1,58 +1,40 @@
 <template>
-  <div class="relative flex-1 bg-white p-6 flex flex-col gap-4">
-    <div class="flex gap-4">
-      <!-- Colonna 1: Carta "Rimuovi articolo" -->
-      <div class="w-1/2 flex justify-center">
-        <div 
-          class="card clickable-card bg-yellow-400 border-yellow-400 hover:bg-yellow-500 focus:ring-yellow-300"
+  <div class="relative flex-1 bg-white p-6 flex flex-col items-center">
+    <!-- Image at the top -->
+    <div class="image-container">
+      <!-- Shape behind the image -->
+      <div class="shape"></div>
+      <img :src="RegisterIcon" alt="Self Checkout Icon" class="self-checkout-image" />
+    </div>
+  
+    <!-- Text under the image -->
+    <div class="instruction-text mt-4 text-center">
+      <h1>Esegui la scansione dell'articolo o seleziona una delle opzioni seguenti!</h1>
+    </div>
+  
+    <!-- Grid layout for buttons -->
+    <div class="buttons-grid mt-6">
+      <CardComponent
+          class="card-component"
+          title="Rimuovi articolo"
+          :icon="removeProductIcon"
           @click="navigateToRemoveItem"
-          role="button"
-          tabindex="0"
-        >
-          <img src="https://img.icons8.com/plasticine/100/000000/delete-forever.png" alt="Remove Item" class="icon">
-          <span class="text-xl font-semibold text-gray-800">Rimuovi articolo</span>
-        </div>
-      </div>
-
-      <!-- Colonna 2: Carta "Usa Promozione" -->
-      <div class="w-1/2 flex justify-center">
-        <div 
-          class="card clickable-card bg-yellow-400 border-yellow-400 hover:bg-yellow-500 focus:ring-yellow-300"
+      />
+      <CardComponent
+          class="card-component"
+          title="Usa Buono Spesa"
+          :icon="SaleIcon"
           @click="usePromotion"
-          role="button"
-          tabindex="0"
-        >
-          <img src="https://img.icons8.com/fluency/48/000000/sale.png" alt="Promotion" class="icon">
-          <span class="text-xl font-semibold text-gray-800">Usa Promozione</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Seconda riga: Carta "Scrivi Codice Articolo" -->
-    <div class="flex w-full mt-4">
-      <div 
-        class="card clickable-card bg-yellow-400 border-yellow-400 hover:bg-yellow-500 focus:ring-yellow-300"
+        />
+      <CardComponent
+        class="card-component"
+        title="Scrivi Codice Articolo"
+        :icon="KeyboardIcon"
         @click="writeItemCode"
-        role="button"
-        tabindex="0"
-      >
-        <img src="https://img.icons8.com/fluency/48/000000/barcode.png" alt="Write Code" class="icon">
-        <span class="text-xl font-semibold text-gray-800">Scrivi Codice Articolo</span>
-      </div>
-    </div>
-
-    <!-- Input simulato per il codice a barre -->
-    <div class="mt-4">
-      <input
-        type="text"
-        v-model="scannedCode"
-        placeholder="Inserisci il codice a barre"
-        @keydown.enter.prevent="handleScan"
-        class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
-
-    <!-- Terza riga: Pulsante animato di pagamento -->
+  
+    <!-- Animated payment button at the bottom -->
     <div class="absolute bottom-6 left-0 right-0 flex justify-center">
       <AnimatedButton
         class="animated-button text-2xl p-4 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-200 ease-in-out"
@@ -62,6 +44,7 @@
       />
     </div>
   </div>
+  
 </template>
 
 <script setup>
@@ -71,19 +54,25 @@ import supabase from '../../config/supabaseClient.js';
 import { useProductStore } from '../../stores/productStore';
 import Swal from 'sweetalert2';
 import AnimatedButton from '../AnimatedButton.vue';
+import CardComponent from '../CardComponent.vue';
+import removeProductIcon from '@/assets/removeproduct_icon.svg';
+import RegisterIcon from '@/assets/register.svg';
+import SaleIcon from '@/assets/sale.svg';
+import KeyboardIcon from '@/assets/keyboard.svg';
+
 
 const scannedCode = ref('');
 const router = useRouter();
 const productStore = useProductStore();
 
-const handleScan = async () => {
-  if (scannedCode.value.trim() === '') return;
+const handleScan = async (code) => {
+  if (code.trim() === '') return;
 
   try {
     const { data, error } = await supabase
       .from('product')
       .select('*')
-      .eq('productcode', scannedCode.value);
+      .eq('productcode', code);
 
     if (error) {
       Swal.fire({
@@ -124,66 +113,99 @@ const navigateToRemoveItem = () => {
 };
 
 const usePromotion = () => {
-  // Implement logic to use a promotion
+  router.push({ name: 'SalesView' });
 };
 
-const writeItemCode = () => {
-  // Implement logic to write item code
+const writeItemCode = async () => {
+  const { value: code } = await Swal.fire({
+    title: 'Inserisci Codice Articolo',
+    input: 'text',
+    inputLabel: 'Codice Articolo',
+    inputPlaceholder: 'Inserisci il codice',
+    showCancelButton: true,
+    confirmButtonText: 'Conferma',
+    cancelButtonText: 'Annulla',
+    inputValidator: (value) => {
+      if (!value) {
+        return 'Devi inserire un codice!';
+      }
+    }
+  });
+
+  if (code) {
+    await handleScan(code);
+  }
 };
 
 const proceedToPayment = () => {
-  router.push({ name: 'BagSelection' });
+  if(Number(productStore.totalAmount) == 0 && productStore.items.length == 0){
+    Swal.fire({
+        title: 'Errore!',
+        text: 'Devi acquistare almeno un prodotto',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+  }else{
+    router.push({ name: 'BagSelection' });
+  }
 };
 </script>
 
 <style scoped>
-.card {
-  width: 100%;
-  height: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffd814; /* Colore di sfondo */
-  border: 2px solid #ffd814; /* Colore del bordo */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  text-align: center;
-  padding: 1rem;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-}
-
-.card:focus {
-  outline: none;
-  ring: 2px solid #ffd814;
-}
-
-.icon {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 0.5rem;
-}
-
-.text-xl {
-  font-size: 1.5rem;
-}
-
-.text-2xl {
-  font-size: 1.75rem;
-}
-
 .relative {
   position: relative;
+  overflow: hidden; /* Prevents overflow issues */
 }
 
-.absolute {
+.shape {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px; /* Adjust size as needed */
+  height: 200px; /* Adjust size as needed */
+  background-color: #22C55E; /* Light green color */
+  border-radius: 50%; /* Make it circular */
+  transform: translate(-50%, -50%); /* Center the shape */
+  z-index: 1; /* Place it behind the image */
+}
+
+.self-checkout-image {
+  width: 100%; /* Responsive width */
+  height: auto; /* Maintain aspect ratio */
+  position: relative; /* Required for proper z-index stacking */
+  z-index: 2; /* Ensure this is above the shape */
+}
+
+.image-container {
+  position: relative; /* Needed for positioning the shape */
+  width: 150px; /* Increased size */
+  margin: 0 auto; /* Center the image container */
+}
+
+.self-checkout-image {
+  width: 100%; /* Responsive width */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.instruction-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center; /* Center text */
+}
+
+.buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust columns based on screen size */
+  gap: 16px; /* Adjust spacing between buttons */
+  width: 100%;
+  max-width: 100%; /* Ensure it does not overflow */
+  padding: 0 16px; /* Add padding to the sides */
+  box-sizing: border-box; /* Include padding in width calculations */
+}
+
+.card-component {
+  text-align: center;
 }
 
 .bottom-6 {

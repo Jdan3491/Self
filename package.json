@@ -16,6 +16,7 @@
     "@supabase/supabase-js": "^2.45.1",
     "autoprefixer": "^10.4.20",
     "element-plus": "^2.8.0",
+    "lottie-web": "^5.12.2",
     "pinia": "^2.1.7",
     "postcss": "^8.4.41",
     "sweetalert2": "^11.12.4",

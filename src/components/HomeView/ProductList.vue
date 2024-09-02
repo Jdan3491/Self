@@ -8,9 +8,12 @@
         <ul class="divide-y divide-gray-200">
           <!-- Utilizza l'indice `index` per identificare l'elemento da rimuovere -->
           <li v-for="(item, index) in productStore.paginatedItems" :key="index"
-              :class="{'bg-yellow-300': item === productStore.highlightItem}" 
+              :class="[
+              {'bg-green-500': index === 0, 'bg-yellow-300': item === productStore.highlightItem && index !== 0},
+              'flex justify-between items-center p-2'
+            ]"
               class="py-4 flex justify-between items-center">
-            <span class="font-medium text-lg truncate w-2/3">{{ item.name }}</span>
+            <span class="font-medium text-lg truncate w-2/3"><h2><strong>{{ item.name }}</strong></h2></span>
             <div class="flex items-center w-1/3 justify-end">
               <span class="text-blue-600 font-semibold mr-4">€{{ item.price.toFixed(2) }}</span>
               <!-- Passa l'indice dell'elemento nella pagina corrente per rimuoverlo -->
@@ -23,14 +26,33 @@
       <!-- Fixed Footer Section -->
       <div class="fixed-footer bg-white border-t border-gray-200 p-6">
         <div class="flex justify-between items-center mb-4">
-          <el-button @click="productStore.previousPage" :disabled="productStore.currentPage === 1" size="small" class="px-4 py-2">Precedente</el-button>
+          <el-button @click="productStore.previousPage" :disabled="productStore.currentPage === 1" size="small" class="px-4 py-4 text-2xl">Precedente</el-button>
           <span class="font-medium text-lg">Pagina {{ productStore.currentPage }} di {{ productStore.totalPages }}</span>
-          <el-button @click="productStore.nextPage" :disabled="productStore.currentPage === productStore.totalPages" size="small" class="px-4 py-2">Successivo</el-button>
+          <el-button @click="productStore.nextPage" :disabled="productStore.currentPage === productStore.totalPages" size="small" class="text-2xl px-4 py-4">Successivo</el-button>
         </div>
         
-        <div class="flex justify-between items-center">
-          <span class="text-2xl font-bold">Totale:</span>
-          <span class="text-2xl font-bold text-blue-800">€{{ productStore.totalAmount.toFixed(2) }}</span>
+        <!-- Total and Discount Section -->
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between items-center">
+            <span class="text-2xl font-bold">Totale:</span>
+            <span class="text-2xl font-bold text-blue-800">€{{ productStore.totalAmount.toFixed(2) }}</span>
+          </div>
+
+          <!-- Sezione per il calcolo e la visualizzazione dello sconto -->
+          <div v-if="discountStore.isDiscountApplied" class="flex flex-col gap-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xl font-medium">Sconto Applicato:</span>
+              <p v-if="discountStore.discountDetails.type === 'percentage'" class="text-xl text-red-600">-{{ discountStore.discountDetails.value }}%</p>
+              <p v-if="discountStore.discountDetails.type === 'fixed'" class="text-xl text-red-600">-€ Fixed</p>
+              <p>ok2</p>
+            </div>
+
+            <!-- Calcolo del prezzo finale con lo sconto -->
+            <div class="flex justify-between items-center">
+              <span class="text-xl font-medium">Prezzo Finale:</span>
+              <span class="text-xl font-bold text-green-700">€1X</span>
+            </div>
+          </div>
         </div>
       </div>
     </el-card>
@@ -38,11 +60,13 @@
 </template>
 
 <script setup>
-import { useProductStore } from '../../stores/productStore';
 import { onMounted } from 'vue';
+import { useProductStore } from '../../stores/productStore';
+import { useDiscountStore } from '../../stores/discountStore'; // Importa il discountStore
 
 // Accedi allo store per gestire gli articoli e la paginazione
 const productStore = useProductStore();
+const discountStore = useDiscountStore(); // Accedi al discountStore
 
 // Log per debug
 onMounted(() => {
@@ -94,6 +118,12 @@ const removeItem = (indexInPage) => {
 .text-blue-800 {
   color: #2b2d8a;
 }
+.text-green-700 {
+  color: #38a169;
+}
+.text-red-600 {
+  color: #e53e3e;
+}
 .bg-yellow-300 {
   background-color: #ffd814; /* Colore di evidenziazione */
 }
@@ -113,6 +143,9 @@ const removeItem = (indexInPage) => {
 }
 .content-scrollable {
   overflow-y: auto;
+}
+.bg-green-500 {
+  background-color: #22C55E; /* Highlight color for the first item */
 }
 .fixed-footer {
   position: absolute;

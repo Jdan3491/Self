@@ -20,10 +20,6 @@
   justify-content: center;
   align-items: center;
   padding: 1rem;
-  border-radius: 12px; /* Rounded corners for the logo container */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
-  transition: box-shadow 0.3s ease, background-color 0.3s ease; /* Smooth transition effects */
 }
 
 /* Responsive logo style */

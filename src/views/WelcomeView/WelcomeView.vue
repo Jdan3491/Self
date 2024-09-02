@@ -26,10 +26,10 @@
 
       <!-- Animated Button with Hover Effect -->
       <AnimatedButton
-        class="animated-button"
+        class="animated-button text-2xl p-4 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-200 ease-in-out"
         title="Avvio"
         :onClick="welcomeComponent.goToPage"
-        aria-label="Start"
+        aria-label="Avvio"
       />
     </div>
   </div>

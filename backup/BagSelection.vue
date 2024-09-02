@@ -145,53 +145,47 @@ const changeQuantity = (bagType, change) => {
 const confirmSelection = () => {
   const totalBagsCostValue = totalBagsCost.value;
   const selectedBags = form.value.selectedBags;
-  productStore.updateBagsCost(totalBagsCostValue);
-
-  productStore.BagsSelected = Object.keys(selectedBags).map(key => ({
-    type: 'bag',
-    value: key,
-    quantity: selectedBags[key].quantity,
-    cost: bagTypes.value.find(bag => bag.value === key).cost
-  }));
-
-  productStore.saveSelectedBags(); // Save selected bags to localStorage
-
+  productStore.updateBagsCost(totalBagsCostValue); // Update store with the total bags cost
+  productStore.BagsSelected = Object.keys(selectedBags).map(key => {
+        return {
+          type: 'bag',
+          value: key,
+          quantity: selectedBags[key].quantity,
+          cost: bagTypes.value.find(bag => bag.value === key).cost
+        };
+      });
+    
+  // Navigate to the payment page
   router.push({ name: 'Payment' });
 };
 
-
 // Function to handle cancelation and reset bag selection in store
 const cancel = () => {
-  productStore.clearSavedBags(); // Clear saved selected bags
-  productStore.resetBagsCost();
-  productStore.BagsSelected = productStore.BagsSelected.filter(item => item.type !== 'bag');
-  router.back();
+  productStore.resetBagsCost(); // Reset the bags cost in store
+  productStore.BagsSelected = productStore.BagsSelected.filter(item => item.type !== 'bag'); // Remove all bag items from store
+  router.back(); // Navigate back
 };
-
 
 // Ensure store is reset when navigating away from the component
 onBeforeRouteLeave((to, from) => {
   if (from.path === '/home') {
     productStore.resetBagsCost();
-    productStore.clearSavedBags(); // Clear saved bags on leaving the component
-    productStore.BagsSelected = productStore.BagsSelected.filter(item => item.type !== 'bag');
+    productStore.BagsSelected = productStore.BagsSelected.filter(item => item.type !== 'bag'); // Remove all bag items from store
   }
 });
 
-
 // Initialize the component and load any pre-selected bags from the store
 onMounted(() => {
-  productStore.loadSelectedBags(); // Load previously selected bags from localStorage
-
+  // Fetch pre-selected bags from the store
   const storedBags = productStore.BagsSelected.filter(item => item.type === 'bag');
+  // Initialize the selected bags in the form based on stored data
   storedBags.forEach(bag => {
-    form.value.selectedBags[bag.value] = {
-      type: bag.value,
+    form.value.selectedBags[bag.type] = {
+      type: bag.type,
       quantity: bag.quantity,
     };
   });
 });
-
 </script>
 
 
