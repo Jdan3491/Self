@@ -7,34 +7,53 @@ import './assets/styles/tailwind.css';
 import 'swiper/swiper-bundle.css';
 import { RouterView } from 'vue-router';
 import router from './router';
-import UnsupportedDevice from './views/UnsupportedDevice/UnsupportedDevice.vue'; // Assicurati che il percorso sia corretto
+import UnsupportedDevice from './views/UnsupportedDevice/UnsupportedDevice.vue'; // Ensure the path is correct
+import SpeechSynthesis from './utils/speechSynthesis'; // Import the speech synthesis utility
 
+// Define the main application component
 const App = defineComponent({
   setup() {
-    const isScreenLargeEnough = ref(false);
+    // State to determine if the screen size is large enough
+    const isScreenLargeEnough = ref<boolean>(false);
 
-    const checkScreenSize = () => {
-      isScreenLargeEnough.value = window.innerWidth >= 768; // Mostra l'app solo se la larghezza dello schermo è maggiore o uguale a 768px (tablet e superiori)
+    // Function to check screen size
+    const checkScreenSize = (): void => {
+      isScreenLargeEnough.value = window.innerWidth >= 768; // Show the app only if the screen width is 768px or greater
     };
 
+    // Lifecycle hook to run when the component is mounted
     onMounted(() => {
-      checkScreenSize(); // Controlla inizialmente la dimensione dello schermo
-      window.addEventListener('resize', checkScreenSize); // Aggiunge un listener per controllare le dimensioni dello schermo al ridimensionamento
+      checkScreenSize(); // Initial check of screen size
+      window.addEventListener('resize', checkScreenSize); // Add event listener for screen resize
     });
 
     return { isScreenLargeEnough };
   },
   render() {
+    // Render the main router view or the unsupported device component based on screen size
     return this.isScreenLargeEnough
-      ? h(RouterView) // Utilizza RouterView per il rendering delle pagine basate sul router
-      : h(UnsupportedDevice); // Mostra UnsupportedDevice se lo schermo è troppo piccolo
+      ? h(RouterView) // Render pages based on the router
+      : h(UnsupportedDevice); // Show UnsupportedDevice if the screen is too small
   },
 });
 
+// Create the Vue application instance
 const app = createApp(App);
 
+// Use Pinia for state management
 app.use(createPinia());
+
+// Use router for navigation
 app.use(router);
+
+// Use Element Plus UI framework
 app.use(ElementPlus);
 
+// Provide the speech synthesis utility globally
+app.config.globalProperties.$speakItem = SpeechSynthesis.speak.bind(SpeechSynthesis);
+
+// Initialize the SpeechSynthesis utility
+SpeechSynthesis.init();
+
+// Mount the app to the DOM
 app.mount('#app');

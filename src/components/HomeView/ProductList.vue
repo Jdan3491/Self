@@ -1,5 +1,7 @@
 <template>
-  <div class="product-list bg-gray-100 relative h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] xl:h-[90vh] flex flex-col">
+  <div
+    class="product-list bg-gray-100 relative h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] xl:h-[90vh] flex flex-col"
+  >
     <el-card class="flex flex-col h-full">
       <!-- Product List -->
       <div class="content-scrollable flex-1 overflow-y-auto p-6">
@@ -7,17 +9,29 @@
 
         <ul class="divide-y divide-gray-200">
           <!-- Utilizza l'indice `index` per identificare l'elemento da rimuovere -->
-          <li v-for="(item, index) in productStore.paginatedItems" :key="index"
-              :class="[
-                {'bg-green-500': index === 0, 'bg-yellow-300': item === productStore.highlightItem && index !== 0},
-                'flex justify-between items-center p-2'
-              ]"
-              class="py-4 flex justify-between items-center">
-            <span class="font-medium text-lg truncate w-2/3"><h2><strong>{{ item.name }}</strong></h2></span>
+          <li
+            v-for="(item, index) in productStore.paginatedItems"
+            :key="index"
+            :class="[
+              {
+                'bg-green-500': index === 0,
+                'bg-yellow-300': item === productStore.highlightItem && index !== 0
+              },
+              'flex justify-between items-center p-2'
+            ]"
+            class="py-4 flex justify-between items-center"
+          >
+            <span class="font-medium text-lg truncate w-2/3"
+              ><h2>
+                <strong>{{ item.name }}</strong>
+              </h2></span
+            >
             <div class="flex items-center w-1/3 justify-end">
               <span class="text-blue-600 font-semibold mr-4">€{{ item.price.toFixed(2) }}</span>
               <!-- Passa l'indice dell'elemento nella pagina corrente per rimuoverlo -->
-              <el-button @click="removeItem(index)" type="danger" size="small" class="px-4 py-1">Rimuovi</el-button>
+              <el-button @click="removeItem(index)" type="danger" size="small" class="px-4 py-1"
+                >Rimuovi</el-button
+              >
             </div>
           </li>
         </ul>
@@ -26,30 +40,54 @@
       <!-- Fixed Footer Section -->
       <div class="fixed-footer bg-white border-t border-gray-200 p-6">
         <div class="flex justify-between items-center mb-4">
-          <el-button @click="productStore.previousPage" :disabled="productStore.currentPage === 1" size="small" class="px-4 py-4 text-2xl">Precedente</el-button>
-          <span class="font-medium text-lg">Pagina {{ productStore.currentPage }} di {{ productStore.totalPages }}</span>
-          <el-button @click="productStore.nextPage" :disabled="productStore.currentPage === productStore.totalPages" size="small" class="text-2xl px-4 py-4">Successivo</el-button>
+          <el-button
+            @click="productStore.previousPage"
+            :disabled="productStore.currentPage === 1"
+            size="small"
+            class="px-4 py-4 text-2xl"
+            >Precedente</el-button
+          >
+          <span class="font-medium text-lg"
+            >Pagina {{ productStore.currentPage }} di {{ productStore.totalPages }}</span
+          >
+          <el-button
+            @click="productStore.nextPage"
+            :disabled="productStore.currentPage === productStore.totalPages"
+            size="small"
+            class="text-2xl px-4 py-4"
+            >Successivo</el-button
+          >
         </div>
-        
+
         <!-- Total and Discount Section -->
         <div class="flex flex-col gap-2">
-          <div class="flex justify-between items-center"  v-if="!discountStore.isDiscountApplied">
+          <div class="flex justify-between items-center" v-if="!discountStore.isDiscountApplied">
             <span class="text-2xl font-bold">Totale:</span>
-            <span class="text-2xl font-bold text-blue-800">€{{ productStore.totalAmount.toFixed(2) }}</span>
+            <span class="text-5xl font-bold text-blue-800"
+              >€{{ productStore.totalAmount.toFixed(2) }}</span
+            >
           </div>
           <div class="flex justify-between items-center" v-else>
             <span class="text-2xl font-bold">Totale:</span>
-            <span class="text-2xl font-bold text-blue-800">€{{ productStore.totalAmount.toFixed(2) }}</span>
+            <span class="text-2xl font-bold text-blue-800"
+              >€{{ productStore.totalAmount.toFixed(2) }}</span
+            >
           </div>
 
           <!-- Discount Section -->
           <div v-if="discountStore.isDiscountApplied" class="flex flex-col gap-2">
             <div class="flex justify-between items-center">
               <span class="text-2xl font-medium">Sconto Applicato:</span>
-              <h1 v-if="discountStore.discountDetails.discount_type === 'percentage'" class="text-2xl text-red-600">
+              <h1
+                v-if="discountStore.discountDetails.discount_type === 'percentage'"
+                class="text-2xl text-red-600"
+              >
                 -{{ discountStore.discountDetails.value }}%
               </h1>
-              <p v-if="discountStore.discountDetails.discount_type === 'fixed'" class="text-2xl text-red-600">
+              <p
+                v-if="discountStore.discountDetails.discount_type === 'fixed'"
+                class="text-2xl text-red-600"
+              >
                 - €{{ discountStore.discountDetails.value }}
               </p>
             </div>
@@ -57,7 +95,9 @@
             <!-- Final Price Calculation with Discount -->
             <div class="flex justify-between items-center">
               <span class="text-2xl font-medium">Prezzo Finale:</span>
-              <span class="text-2xl font-bold text-green-800">€{{ discountStore.discountedTotal }}</span>
+              <span class="text-5xl font-bold text-green-800"
+                >€{{ discountStore.discountedTotal.toFixed(2) }}</span
+              >
             </div>
           </div>
         </div>
@@ -67,23 +107,21 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { useProductStore } from '../../stores/productStore';
-import { useDiscountStore } from '../../stores/discountStore'; // Importa il discountStore
+import { onMounted } from 'vue'
+import { useProductStore } from '../../stores/productStore'
+import { useDiscountStore } from '../../stores/discountStore' // Importa il discountStore
 
 // Accedi allo store per gestire gli articoli e la paginazione
-const productStore = useProductStore();
-const discountStore = useDiscountStore(); // Accedi al discountStore
+const productStore = useProductStore()
+const discountStore = useDiscountStore() // Accedi al discountStore
 
 // Log per debug
-onMounted(() => {
-
-});
+onMounted(() => {})
 
 // Funzione per rimuovere un elemento utilizzando l'indice nella pagina corrente
 const removeItem = (indexInPage) => {
-  productStore.removeItem(indexInPage);
-};
+  productStore.removeItem(indexInPage)
+}
 </script>
 
 <style scoped>
@@ -152,7 +190,7 @@ const removeItem = (indexInPage) => {
   overflow-y: auto;
 }
 .bg-green-500 {
-  background-color: #22C55E; /* Highlight color for the first item */
+  background-color: #22c55e; /* Highlight color for the first item */
 }
 .fixed-footer {
   position: absolute;

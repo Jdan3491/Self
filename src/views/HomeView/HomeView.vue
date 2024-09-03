@@ -1,7 +1,12 @@
 <template>
   <div class="flex flex-col min-h-screen min-w-screen">
     <!-- Include Header Component -->
-    <Header />
+    <MainHeader
+      leftText="Assistenza"
+      showButton
+      buttonText="Richiedi Supporto"
+      :onButtonClick="requestSupport"
+    />
 
     <!-- Main Content Area -->
     <div class="flex flex-1 overflow-hidden">
@@ -15,9 +20,12 @@
 </template>
 
 <script setup>
-import Header from '../../components/HomeView/Header.vue';
-import ProductList from '../../components/HomeView/ProductList.vue';
-import RightPanel from '../../components/HomeView/RightPanel.vue';
+import MainHeader from '../../components/MainHeader.vue'
+import ProductList from '../../components/HomeView/ProductList.vue'
+import RightPanel from '../../components/HomeView/RightPanel.vue'
+const requestSupport = () => {
+  alert('Supporto richiesto.')
+}
 </script>
 
 <style scoped>

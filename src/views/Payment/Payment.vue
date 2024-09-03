@@ -15,7 +15,7 @@
 
       <!-- Payment Method Selection -->
       <div class="payment-methods flex flex-wrap gap-4 justify-center">
-        <div 
+        <div
           v-for="method in paymentMethods"
           :key="method.value"
           class="card p-4 border rounded-lg shadow-md bg-white cursor-pointer transition-transform duration-300 ease-in-out"
@@ -48,37 +48,40 @@
 
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import Swal from 'sweetalert2';
-import AnimatedButton from '../../components/AnimatedButton.vue';
-import { useImgStore } from '@/stores/imgStore';
-import { useProductStore } from '@/stores/productStore'; // Import the product store
-
-const imgStore = useImgStore();
-const productStore = useProductStore(); // Initialize the product store
-
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
+import AnimatedButton from '../../components/AnimatedButton.vue'
+import { useImgStore } from '@/stores/imgStore'
+import { useProductStore } from '@/stores/productStore' // Import the product store
+import { useDiscountStore } from '@/stores/discountStore'
+const imgStore = useImgStore()
+const productStore = useProductStore() // Initialize the product store
+const discountStore = useDiscountStore() // Accedi al discountStore
 // Define available payment methods
 const paymentMethods = ref([
   { value: 'creditCard', label: 'Carta di Credito' },
   { value: 'paypalIcon', label: 'PayPal' },
   { value: 'cash', label: 'Contante' }
-]);
+])
 
 // Form model to keep track of selected payment method
-const selectedMethod = ref('');
+const selectedMethod = ref('')
 
 // Total amount to be paid
-const totalAmount = ref(productStore.totalAmountWithBags);
+const totalAmount = ref(
+  discountStore.discountedTotal > 0
+    ? discountStore.discountedTotal + productStore.bagsCost
+    : productStore.totalAmountWithBags
+)
 
 // Router instance
-const router = useRouter();
+const router = useRouter()
 
 // Select payment method
 const selectPaymentMethod = (value) => {
-  selectedMethod.value = value; // Update the selected method
-};
-
+  selectedMethod.value = value // Update the selected method
+}
 
 // Confirm payment
 const confirmPayment = () => {
@@ -88,29 +91,35 @@ const confirmPayment = () => {
       text: 'Per favore, seleziona un metodo di pagamento.',
       icon: 'error',
       confirmButtonText: 'OK'
-    });
-    return;
+    })
+    return
   }
 
-  if (selectedMethod.value === 'cash') {
-    // Navigate to CashService screen if payment method is cash
-    router.push({ name: 'CashService' });
-  } else {
-    Swal.fire({
-      title: 'Successo!',
-      text: 'Pagamento completato con successo.',
-      icon: 'success',
-      confirmButtonText: 'OK'
-    }).then(() => {
-      router.push({ name: 'ConfirmationPage' }); // Navigate to a confirmation page or receipt screen
-    });
-  }
-};
+  Swal.fire({
+    title: 'Hai carte sconti da applicare?',
+    icon: 'warning',
+    confirmButtonText: 'Scannerrizza sconti',
+    cancelButtonText: 'No Prosegui al pagamento',
+    allowOutsideClick: false,
+    showCancelButton: true,
+    showConfirmButton: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Applica sconti
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      if (selectedMethod.value === 'cash') {
+        router.push({ name: 'CashService' })
+      } else {
+        // Page Card Contatless
+      }
+    }
+  })
+}
 
 // Cancel action
 const cancel = () => {
-  router.back(); // Navigate back to the previous page
-};
+  router.back() // Navigate back to the previous page
+}
 </script>
 
 <style scoped>
@@ -124,7 +133,7 @@ const cancel = () => {
   background-color: #fff; /* Mantieni il colore di sfondo bianco */
   border: 4px solid #ffd814; /* Bordo dello stesso colore del background */
   border-radius: 8px; /* Raggio del bordo arrotondato */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ombra leggera */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombra leggera */
   text-align: center;
   padding: 1.5rem; /* Spaziatura interna */
   cursor: pointer;
@@ -133,7 +142,7 @@ const cancel = () => {
 
 .card:hover {
   transform: translateY(-2px); /* Leggero movimento verso l'alto al passaggio del mouse */
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* Ombra più profonda al passaggio del mouse */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Ombra più profonda al passaggio del mouse */
 }
 
 .card:focus {

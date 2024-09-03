@@ -1,5 +1,10 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import {
+  defineStore
+} from 'pinia';
+import {
+  ref,
+  computed
+} from 'vue';
 
 export const useProductStore = defineStore('productStore', () => {
   const items = ref([]);
@@ -51,7 +56,7 @@ export const useProductStore = defineStore('productStore', () => {
     if (currentPage.value < totalPages.value) currentPage.value++;
   };
 
-  const totalAmount = computed(() => 
+  const totalAmount = computed(() =>
     items.value.reduce((sum, item) => sum + (item.price || 0), 0)
   );
 
@@ -92,6 +97,7 @@ export const useProductStore = defineStore('productStore', () => {
     totalAmount,
     totalAmountWithBags,
     totalPages,
+    bagsCost,
     addItem,
     removeItemById,
     removeItem,
@@ -101,6 +107,6 @@ export const useProductStore = defineStore('productStore', () => {
     resetBagsCost,
     saveSelectedBags, // Save selected bags
     loadSelectedBags, // Load selected bags
-    clearSavedBags   // Clear saved bags
+    clearSavedBags // Clear saved bags
   };
 });

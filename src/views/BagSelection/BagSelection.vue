@@ -3,10 +3,12 @@
     <!-- Header Section -->
     <header class="flex-shrink-0 text-gray-800 p-4 bg-yellow-400">
       <h2 class="text-2xl font-bold">Seleziona e Regola la Quantità del Sacchetto</h2>
-      <h1 class="text-3xl text-center"><span>Totale Articoli del carrello:</span> <span>€{{ tot.toFixed(2) }}</span></h1>
     </header>
 
     <!-- Main Content Section -->
+    <span class="text-4xl my-4 text-center font-bold"
+      >Totale Articoli del carrello: <span class="text-green-800">€{{ tot.toFixed(2) }}</span></span
+    >
     <main class="flex-grow overflow-auto p-4 lg:flex lg:gap-8">
       <!-- Bag Selection Section -->
       <div class="flex flex-col lg:flex-row lg:w-2/3 gap-4">
@@ -28,7 +30,10 @@
       <div class="lg:w-1/3 mt-4 lg:mt-0">
         <div class="summary-container bg-white p-4 rounded-lg shadow-md h-full">
           <h3 class="text-lg font-semibold mb-2">Riepilogo Selezioni</h3>
-          <div v-if="Object.keys(form.selectedBags).length === 0" class="empty-selection text-center text-gray-500">
+          <div
+            v-if="Object.keys(form.selectedBags).length === 0"
+            class="empty-selection text-center text-gray-500"
+          >
             Nessun sacchetto selezionato
           </div>
           <div v-else>
@@ -39,24 +44,38 @@
             >
               <div class="flex flex-col w-full">
                 <div class="flex justify-between items-center">
-                  <span>{{ bagTypes.find(b => b.value === bagType).label }}</span>
-                  <span>€{{ (bagTypes.find(b => b.value === bagType).cost * bag.quantity).toFixed(2) }}</span>
+                  <span>{{ bagTypes.find((b) => b.value === bagType).label }}</span>
+                  <span
+                    >€{{
+                      (bagTypes.find((b) => b.value === bagType).cost * bag.quantity).toFixed(2)
+                    }}</span
+                  >
                 </div>
                 <div class="quantity-controls mt-2">
-                  <button @click="changeQuantity(bagType, -1)" style="width:60px; heigth:60px"><span style="font-size:2rem">-</span></button>
+                  <button @click="changeQuantity(bagType, -1)" style="width: 60px; heigth: 60px">
+                    <span style="font-size: 2rem">-</span>
+                  </button>
                   <input
                     type="number"
                     v-model.number="form.selectedBags[bagType].quantity"
                     class="w-50"
                   />
-                  <button @click="changeQuantity(bagType, 1)" style="width:60px; heigth:60px"><span style="font-size:2rem">+</span></button>
+                  <button @click="changeQuantity(bagType, 1)" style="width: 60px; heigth: 60px">
+                    <span style="font-size: 2rem">+</span>
+                  </button>
                 </div>
               </div>
             </div>
             <div class="totals mt-4 pt-2 border-t border-gray-300">
-              <p><span>Totale Sacchetti:</span> <span>€{{ totalBagsCost.toFixed(2) }}</span></p>
-              <p><span>Totale Spesa:</span> <span>€{{ totalItemsCost.toFixed(2) }}</span></p>
-              <p class="final-total"><span>Totale Finale:</span> <span>€{{ totalFinalCost.toFixed(2) }}</span></p>
+              <p>
+                <span>Totale Sacchetti:</span> <span>€{{ totalBagsCost.toFixed(2) }}</span>
+              </p>
+              <p>
+                <span>Totale Spesa:</span> <span>€{{ totalItemsCost.toFixed(2) }}</span>
+              </p>
+              <p class="final-total">
+                <span>Totale Finale:</span> <span>€{{ totalFinalCost.toFixed(2) }}</span>
+              </p>
             </div>
           </div>
         </div>
@@ -77,7 +96,7 @@
         @click="confirmSelection"
         aria-label="Avanti"
       >
-      Avanti
+        Avanti
       </button>
     </footer>
   </div>
@@ -85,113 +104,133 @@
 
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'; // Import onMounted for lifecycle hook
-import { useRouter, onBeforeRouteLeave } from 'vue-router';
-import Swal from 'sweetalert2';
-import { useImgStore } from '@/stores/imgStore';
-import { useProductStore } from '@/stores/productStore'; // Import the product store
+import { ref, computed, onMounted } from 'vue' // Import onMounted for lifecycle hook
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import Swal from 'sweetalert2'
+import { useImgStore } from '@/stores/imgStore'
+import { useProductStore } from '@/stores/productStore' // Import the product store
+import { useDiscountStore } from '@/stores/discountStore'
 
-const imgStore = useImgStore();
-const productStore = useProductStore(); // Initialize the product store
+const imgStore = useImgStore()
+const productStore = useProductStore() // Initialize the product store
+const discountStore = useDiscountStore() // Accedi al discountStore
 
 const bagTypes = ref([
-  { value: 'bigBag', label: 'Grande', description: 'Sacchetto grande.', cost: 0.50 },
-  { value: 'ecologicBag', label: 'Ecologico', description: 'Sacchetto ecologico.', cost: 0.30 },
-  { value: 'plasticBag', label: 'Plastica', description: 'Sacchetto di plastica.', cost: 1.00 }
-]);
+  { value: 'bigBag', label: 'Grande', description: 'Sacchetto grande.', cost: 0.5 },
+  { value: 'ecologicBag', label: 'Ecologico', description: 'Sacchetto ecologico.', cost: 0.3 },
+  { value: 'plasticBag', label: 'Plastica', description: 'Sacchetto di plastica.', cost: 1.0 }
+])
 
-const form = ref({ selectedBags: {} }); // Reactive object to store user-selected bags
+const form = ref({ selectedBags: {} }) // Reactive object to store user-selected bags
 
-const tot = ref(productStore.totalAmount);
+const tot = ref(
+  discountStore.discountedTotal > 0 ? discountStore.discountedTotal : productStore.totalAmount
+)
 
-const totalItemsCost = computed(() => productStore.totalAmount); // Total cost of items from the product store
+const totalItemsCost = computed(() =>
+  discountStore.discountedTotal > 0 ? discountStore.discountedTotal : productStore.totalAmount
+) // Total cost of items from the product store
 
 const totalBagsCost = computed(() => {
   // Calculate the total cost of selected bags
   return Object.values(form.value.selectedBags).reduce((total, bag) => {
-    const bagType = bagTypes.value.find(b => b.value === bag.type);
-    return total + (bagType.cost * bag.quantity);
-  }, 0);
-});
+    const bagType = bagTypes.value.find((b) => b.value === bag.type)
+    return total + bagType.cost * bag.quantity
+  }, 0)
+})
 
-const totalFinalCost = computed(() => totalItemsCost.value + totalBagsCost.value); // Total cost including bags and items
+const totalFinalCost = computed(() => totalItemsCost.value + totalBagsCost.value) // Total cost including bags and items
 
-const router = useRouter();
+const router = useRouter()
 
-const getIcon = (type) => imgStore.getIcon(type); // Function to get icon based on bag type
+const getIcon = (type) => imgStore.getIcon(type) // Function to get icon based on bag type
 
 // Toggle bag selection in the UI and update the reactive form
 const toggleBagSelection = (type) => {
   if (form.value.selectedBags[type]) {
-    delete form.value.selectedBags[type];
+    delete form.value.selectedBags[type]
   } else {
-    form.value.selectedBags[type] = { type, quantity: 1 };
+    form.value.selectedBags[type] = { type, quantity: 1 }
   }
-};
+}
 
 // Adjust the quantity of selected bags and ensure valid values
 const changeQuantity = (bagType, change) => {
   if (form.value.selectedBags[bagType]) {
-    const newQuantity = form.value.selectedBags[bagType].quantity + change;
+    const newQuantity = form.value.selectedBags[bagType].quantity + change
     if (newQuantity > 0) {
-      form.value.selectedBags[bagType].quantity = newQuantity;
+      form.value.selectedBags[bagType].quantity = newQuantity
     } else {
-      delete form.value.selectedBags[bagType];
+      delete form.value.selectedBags[bagType]
     }
   }
-};
+}
 
 // Function to confirm bag selection and update the store
 const confirmSelection = () => {
-  const totalBagsCostValue = totalBagsCost.value;
-  const selectedBags = form.value.selectedBags;
-  productStore.updateBagsCost(totalBagsCostValue);
+  // Init variables
+  const totalBagsCostValue = totalBagsCost.value
+  const selectedBags = form.value.selectedBags
 
-  productStore.BagsSelected = Object.keys(selectedBags).map(key => ({
-    type: 'bag',
-    value: key,
-    quantity: selectedBags[key].quantity,
-    cost: bagTypes.value.find(bag => bag.value === key).cost
-  }));
+  if (parseFloat(totalBagsCostValue) == 0) {
+    Swal.fire({
+      title: 'Sei sicuro di non volere sacchetti?',
+      icon: 'warning',
+      confirmButtonText: 'Prosegui senza sacchetto',
+      cancelButtonText: 'No voglio selezionare sacchetto',
+      allowOutsideClick: false,
+      showCancelButton: true,
+      showConfirmButton: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push({ name: 'Payment' }) // Navigate to a confirmation page or receipt screen
+      }
+    })
+  } else {
+    productStore.updateBagsCost(totalBagsCostValue)
 
-  productStore.saveSelectedBags(); // Save selected bags to localStorage
+    productStore.BagsSelected = Object.keys(selectedBags).map((key) => ({
+      type: 'bag',
+      value: key,
+      quantity: selectedBags[key].quantity,
+      cost: bagTypes.value.find((bag) => bag.value === key).cost
+    }))
 
-  router.push({ name: 'Payment' });
-};
+    productStore.saveSelectedBags() // Save selected bags to localStorage
 
+    router.push({ name: 'Payment' })
+  }
+}
 
 // Function to handle cancelation and reset bag selection in store
 const cancel = () => {
-  productStore.clearSavedBags(); // Clear saved selected bags
-  productStore.resetBagsCost();
-  productStore.BagsSelected = productStore.BagsSelected.filter(item => item.type !== 'bag');
-  router.back();
-};
-
+  productStore.clearSavedBags() // Clear saved selected bags
+  productStore.resetBagsCost()
+  productStore.BagsSelected = productStore.BagsSelected.filter((item) => item.type !== 'bag')
+  router.back()
+}
 
 // Ensure store is reset when navigating away from the component
 onBeforeRouteLeave((to, from) => {
   if (from.path === '/home') {
-    productStore.resetBagsCost();
-    productStore.clearSavedBags(); // Clear saved bags on leaving the component
-    productStore.BagsSelected = productStore.BagsSelected.filter(item => item.type !== 'bag');
+    productStore.resetBagsCost()
+    productStore.clearSavedBags() // Clear saved bags on leaving the component
+    productStore.BagsSelected = productStore.BagsSelected.filter((item) => item.type !== 'bag')
   }
-});
-
+})
 
 // Initialize the component and load any pre-selected bags from the store
 onMounted(() => {
-  productStore.loadSelectedBags(); // Load previously selected bags from localStorage
+  productStore.loadSelectedBags() // Load previously selected bags from localStorage
 
-  const storedBags = productStore.BagsSelected.filter(item => item.type === 'bag');
-  storedBags.forEach(bag => {
+  const storedBags = productStore.BagsSelected.filter((item) => item.type === 'bag')
+  storedBags.forEach((bag) => {
     form.value.selectedBags[bag.value] = {
       type: bag.value,
-      quantity: bag.quantity,
-    };
-  });
-});
-
+      quantity: bag.quantity
+    }
+  })
+})
 </script>
 
 
@@ -208,7 +247,7 @@ onMounted(() => {
   background-color: #fff; /* Mantieni il colore di sfondo bianco */
   border: 4px solid #ffd814; /* Bordo dello stesso colore del background */
   border-radius: 8px; /* Raggio del bordo arrotondato */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ombra leggera */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombra leggera */
   text-align: center;
   padding: 1.5rem; /* Spaziatura interna */
   cursor: pointer;
@@ -217,7 +256,7 @@ onMounted(() => {
 
 .card:hover {
   transform: translateY(-2px); /* Leggero movimento verso l'alto al passaggio del mouse */
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* Ombra più profonda al passaggio del mouse */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Ombra più profonda al passaggio del mouse */
 }
 
 .card:focus {
@@ -316,5 +355,4 @@ onMounted(() => {
   display: flex;
   justify-content: space-between; /* Align text and values */
 }
-
 </style>
