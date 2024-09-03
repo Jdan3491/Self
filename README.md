@@ -1,6 +1,7 @@
 # self
 
 Questo è un progetto demo "CASSA AMICA"
+ANIMALE
 
 ## Recommended IDE Setup
 
