@@ -9,9 +9,9 @@
           <!-- Utilizza l'indice `index` per identificare l'elemento da rimuovere -->
           <li v-for="(item, index) in productStore.paginatedItems" :key="index"
               :class="[
-              {'bg-green-500': index === 0, 'bg-yellow-300': item === productStore.highlightItem && index !== 0},
-              'flex justify-between items-center p-2'
-            ]"
+                {'bg-green-500': index === 0, 'bg-yellow-300': item === productStore.highlightItem && index !== 0},
+                'flex justify-between items-center p-2'
+              ]"
               class="py-4 flex justify-between items-center">
             <span class="font-medium text-lg truncate w-2/3"><h2><strong>{{ item.name }}</strong></h2></span>
             <div class="flex items-center w-1/3 justify-end">
@@ -33,24 +33,31 @@
         
         <!-- Total and Discount Section -->
         <div class="flex flex-col gap-2">
-          <div class="flex justify-between items-center">
+          <div class="flex justify-between items-center"  v-if="!discountStore.isDiscountApplied">
+            <span class="text-2xl font-bold">Totale:</span>
+            <span class="text-2xl font-bold text-blue-800">€{{ productStore.totalAmount.toFixed(2) }}</span>
+          </div>
+          <div class="flex justify-between items-center" v-else>
             <span class="text-2xl font-bold">Totale:</span>
             <span class="text-2xl font-bold text-blue-800">€{{ productStore.totalAmount.toFixed(2) }}</span>
           </div>
 
-          <!-- Sezione per il calcolo e la visualizzazione dello sconto -->
+          <!-- Discount Section -->
           <div v-if="discountStore.isDiscountApplied" class="flex flex-col gap-2">
             <div class="flex justify-between items-center">
-              <span class="text-xl font-medium">Sconto Applicato:</span>
-              <p v-if="discountStore.discountDetails.type === 'percentage'" class="text-xl text-red-600">-{{ discountStore.discountDetails.value }}%</p>
-              <p v-if="discountStore.discountDetails.type === 'fixed'" class="text-xl text-red-600">-€ Fixed</p>
-              <p>ok2</p>
+              <span class="text-2xl font-medium">Sconto Applicato:</span>
+              <h1 v-if="discountStore.discountDetails.discount_type === 'percentage'" class="text-2xl text-red-600">
+                -{{ discountStore.discountDetails.value }}%
+              </h1>
+              <p v-if="discountStore.discountDetails.discount_type === 'fixed'" class="text-2xl text-red-600">
+                - €{{ discountStore.discountDetails.value }}
+              </p>
             </div>
 
-            <!-- Calcolo del prezzo finale con lo sconto -->
+            <!-- Final Price Calculation with Discount -->
             <div class="flex justify-between items-center">
-              <span class="text-xl font-medium">Prezzo Finale:</span>
-              <span class="text-xl font-bold text-green-700">€1X</span>
+              <span class="text-2xl font-medium">Prezzo Finale:</span>
+              <span class="text-2xl font-bold text-green-800">€{{ discountStore.discountedTotal }}</span>
             </div>
           </div>
         </div>
@@ -70,7 +77,7 @@ const discountStore = useDiscountStore(); // Accedi al discountStore
 
 // Log per debug
 onMounted(() => {
-  console.log('Items aggiunti nel carrello:', productStore.items);
+
 });
 
 // Funzione per rimuovere un elemento utilizzando l'indice nella pagina corrente

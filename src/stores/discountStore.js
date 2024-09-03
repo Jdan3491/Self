@@ -25,17 +25,18 @@ export const useDiscountStore = defineStore('discount', {
   getters: {
     discountedTotal: (state) => {
       const productStore = useProductStore();
-      const totalAmount = productStore.totalAmountWithBags.value;
+      const _totalProducts = productStore.totalAmount;
+      let discountedTotal = 0;
 
       if (state.discountDetails) {
-        if (state.discountDetails.type === 'percentage') {
-          const discountAmount = (state.discountDetails.value / 100) * totalAmount;
-          return totalAmount - discountAmount;
-        } else if (state.discountDetails.type === 'fixed') {
-          return totalAmount - state.discountDetails.value;
+        if (state.discountDetails.discount_type === 'percentage') {
+          const discountAmount = (state.discountDetails.value / 100) * _totalProducts;
+          discountedTotal = _totalProducts - discountAmount;
+        } else if (state.discountDetails.discount_type === 'fixed') {
+          discountedTotal = (Number(_totalProducts) <= Number(state.discountDetails.value)) ? 0 : (Number(_totalProducts) - Number(state.discountDetails.value));
         }
       }
-      return totalAmount;
+      return discountedTotal;
     },
-  },
+  }  
 });

@@ -35,19 +35,32 @@
               placeholder="Inserisci il codice sconto"
               clearable
               class="input-field"
-              :disabled="discountDetails === null"
             ></el-input>
           </div>
 
           <!-- Section for showing applied discount details -->
-          <div v-if="discountDetails" class="mt-6 p-6 bg-blue-50 rounded-lg shadow-lg border border-blue-200 discount-details">
-            <h2 class="font-bold text-2xl text-blue-600 mb-3">Dettagli del Codice Sconto</h2>
-            <p class="text-gray-800"><strong>Codice:</strong> {{ discountDetails.code }}</p>
-            <p class="text-gray-800"><strong>Tipo:</strong> {{ discountDetails.discount_type }}</p>
-            <p class="text-gray-800"><strong>Valore:</strong> {{ discountDetails.value }}</p>
-            <p class="text-gray-800"><strong>Descrizione:</strong> {{ discountDetails.description }}</p>
-            <button @click="removeDiscount" class="mt-4 remove-discount-button">Rimuovi Codice Sconto</button>
-          </div>
+<div
+v-if="discountDetails" class="mt-6 p-6 bg-blue-50 rounded-lg shadow-lg border border-blue-200 discount-details"
+>
+<h1 class="font-bold text-2xl text-blue-600 mb-3">Dettagli del Codice Sconto</h1>
+<p class="text-gray-800"><strong>Codice:</strong> {{ discountDetails.code }}</p>
+<el-divider />
+<h1 class="text-gray-800">
+  <!-- Conditionally render the discount value -->
+  <span v-if="discountDetails.discount_type === 'percentage'" class="text-5xl">
+    {{ discountDetails.value }}%
+  </span>
+  <span v-else-if="discountDetails.discount_type === 'fixed'" class="text-5xl">
+    - €{{ discountDetails.value }}
+  </span>
+</h1>
+<el-divider />
+<p class="text-gray-800"><strong>Descrizione:</strong> {{ discountDetails.description }}</p>
+<button @click="removeDiscount" class="mt-4 remove-discount-button">
+  Rimuovi Codice Sconto
+</button>
+</div>
+
         </div>
       </div>
     </main>
@@ -88,9 +101,7 @@ const discountDetails = ref(store.discountDetails);
 // Watch per aggiornare il discountDetails dal store
 import { watch } from 'vue';
 watch(() => store.discountDetails, (newDetails) => {
-  console.log(discountDetails.discount_type)
   discountDetails.value = newDetails;
-  console.log(discountDetails.value)
 });
 
 const applyDiscount = async () => {
