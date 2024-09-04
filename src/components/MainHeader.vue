@@ -2,12 +2,12 @@
   <header class="header-container flex justify-between items-center p-4 shadow-md h-[10vh]">
     <!-- Left Section (text, button, or empty based on props) -->
     <div class="left-section flex items-center gap-4">
-      <!-- Only Text -->
+      <!-- Solo testo -->
       <div v-if="leftText && !showButton" class="text-lg font-semibold text-gray-800">
         {{ leftText }}
       </div>
 
-      <!-- Text with Button -->
+      <!-- Testo con Bottone -->
       <div v-if="leftText && showButton" class="flex items-center gap-4">
         <span class="text-lg font-semibold text-gray-800">{{ leftText }}</span>
         <el-button
@@ -20,131 +20,157 @@
       </div>
     </div>
 
-    <!-- Audio Control on the Right -->
+    <!-- Controllo del volume -->
     <div class="right-section flex items-center gap-4">
       <label for="volume" class="text-gray-800">Volume:</label>
-      <!-- Volume Bar -->
-      <div class="volume-bar flex items-center gap-1" @click="adjustVolume">
+      <!-- Barra del Volume con icone -->
+      <div class="volume-container flex items-center">
+        <img
+          v-if="isMuted"
+          src="@/assets/volume-mute.svg"
+          alt="Mute Icon"
+          class="volume-icon w-8 h-8 cursor-pointer"
+          @click="toggleMute"
+        />
+        <img
+          v-else-if="volume.value === 0"
+          src="@/assets/volume-mute.svg"
+          alt="Volume Off Icon"
+          class="volume-icon w-8 h-8 cursor-pointer"
+          @click="toggleMute"
+        />
+        <img
+          v-else-if="volume.value > 0 && volume.value <= 50"
+          src="@/assets/volume-low.svg"
+          alt="Volume Low Icon"
+          class="volume-icon w-8 h-8 cursor-pointer"
+        />
+        <img
+          v-else-if="volume.value > 50 && volume.value <= 100"
+          src="@/assets/volume-medium.svg"
+          alt="Volume Medium Icon"
+          class="volume-icon w-8 h-8 cursor-pointer"
+        />
+        <img
+          v-else
+          src="@/assets/volume-high.svg"
+          alt="Volume High Icon"
+          class="volume-icon w-8 h-8 cursor-pointer"
+        />
         <div
-          v-for="index in 5"
-          :key="index"
-          class="volume-bar-item"
-          :style="{ width: barWidth + 'px', height: barHeight + 'px' }"
-          :class="{ 'active': index <= activeBars }"
-        ></div>
+          class="volume-slider flex-1"
+          @click="adjustVolume"
+          :style="{ cursor: isMuted ? 'not-allowed' : 'pointer' }"
+        >
+          <div
+            v-for="index in barCount"
+            :key="index"
+            class="volume-slider-item"
+            :style="{ width: barWidth + 'px', height: barHeight + 'px' }"
+            :class="{ 'active': index <= activeBars }"
+          ></div>
+        </div>
       </div>
+      <el-button
+        type="text"
+        @click="toggleMute"
+        class="text-gray-800 font-semibold hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200"
+      >
+        {{ isMuted ? 'Unmute' : 'Mute' }}
+      </el-button>
     </div>
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import useVolume from '@/composables/useVolume';
+import SpeechSynthesis from '@/utils/speechSynthesis';
 
-// Define props
-const props = defineProps({
-  leftText: {
-    type: String,
-    default: ''
-  },
-  showButton: {
-    type: Boolean,
-    default: false
-  },
-  buttonText: {
-    type: String,
-    default: 'Azione'
-  },
-  onButtonClick: {
-    type: Function,
-    default: null
-  }
-})
+const { volume, setVolume, getVolume } = useVolume();
 
-// Volume control logic
-const volume = ref(100);
-const barCount = 5; // Total number of bars
-const barWidth = 20; // Width of each bar
-const barHeight = 20; // Height of each bar
+const barCount = 5;
+const barWidth = 20;
+const barHeight = 20;
+const isMuted = ref(false);
 
-// Calculate active bars based on volume
-const activeBars = computed(() => Math.ceil(volume.value / (100 / barCount)));
+// Calcolo delle barre attive basato sul volume
+const activeBars = computed(() => Math.ceil(volume.value / (150 / barCount)));
 
-// Handle button click
-const handleLeftButtonClick = () => {
-  if (props.onButtonClick) {
-    props.onButtonClick();
-  }
-};
-
-// Adjust volume
+// Aggiorna il volume quando l'utente clicca sulla barra del volume
 const adjustVolume = (event) => {
+  if (isMuted.value) return;
+
   const rect = event.currentTarget.getBoundingClientRect();
-  const clickX = event.clientX - rect.left; // Click position relative to the container
-  const volumeLevel = Math.min(100, Math.max(0, (clickX / rect.width) * 100));
-  volume.value = volumeLevel;
-  console.log(`Volume set to: ${volume.value}`);
-  // Adjust the speech volume
-  if (window.speechSynthesis.speaking) {
-    const utterance = window.speechSynthesis.getVoices()[0];
-    if (utterance) {
-      utterance.volume = volume.value / 100; // Adjust volume level (0 to 1)
-    }
+  const clickX = event.clientX - rect.left;
+  const newVolume = Math.min(550, Math.max(0, (clickX / rect.width) * 150)); // Volume fino a 150
+
+  // Imposta il volume e aggiorna lo stato di muto
+  setVolume(newVolume);
+  isMuted.value = newVolume === 0;
+  SpeechSynthesis.setVolume(newVolume / 150); // Regola il volume della sintesi vocale
+};
+
+// Funzione per attivare/disattivare il muto
+const toggleMute = () => {
+  isMuted.value = !isMuted.value;
+  const newVolume = isMuted.value ? 0 : getVolume();
+  setVolume(newVolume);
+  SpeechSynthesis.setVolume(newVolume / 150); // Regola il volume della sintesi vocale
+
+  if (isMuted.value) {
+    SpeechSynthesis.stop();
   }
 };
 
-// Speak a welcome message when the component is mounted
-const speakMessage = (text) => {
-  if (!('speechSynthesis' in window)) {
-    console.warn('Speech Synthesis not supported in this browser.');
-    return;
-  }
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'it-IT'; // Set language to Italian
-  utterance.volume = volume.value / 100; // Adjust volume level (0 to 1)
-  window.speechSynthesis.speak(utterance);
-};
-
-// Repeat the message every 10 seconds
-let messageInterval;
+// Imposta il volume corrente all'avvio
 onMounted(() => {
-  speakMessage('Benvenuto Il');
-});
-
-// Clean up interval when component unmounts
-onUnmounted(() => {
-  clearInterval(messageInterval);
+  const initialVolume = getVolume();
+  setVolume(initialVolume);
+  SpeechSynthesis.setVolume(initialVolume / 150);
 });
 </script>
 
 <style scoped>
 .header-container {
-  background-color: #ffd814; /* Background color for the header */
+  background-color: #ffd814;
 }
 
-.volume-bar {
+.volume-container {
   display: flex;
   align-items: center;
+  gap: 1rem;
+}
+
+.volume-icon {
   cursor: pointer;
 }
 
-.volume-bar-item {
-  background-color: #e5e5e5; /* Inactive color */
+.volume-slider {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex: 1;
+  height: 20px;
+}
+
+.volume-slider-item {
+  background-color: #e5e5e5;
   border-radius: 4px;
   transition: background-color 0.3s;
 }
 
-.volume-bar-item.active {
-  background-color: #22c55e; /* Active color (green) */
+.volume-slider-item.active {
+  background-color: #22c55e;
 }
 
 .left-section {
-  flex: 1; /* Grow to take available space */
+  flex: 1;
 }
 
 .right-section {
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* Space between volume label and slider */
+  gap: 0.5rem;
 }
 </style>

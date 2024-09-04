@@ -6,26 +6,26 @@
       <div class="shape"></div>
       <img :src="RegisterIcon" alt="Self Checkout Icon" class="self-checkout-image" />
     </div>
-  
+
     <!-- Text under the image -->
     <div class="instruction-text mt-4 text-center">
       <h1>Esegui la scansione dell'articolo o seleziona una delle opzioni seguenti!</h1>
     </div>
-  
+
     <!-- Grid layout for buttons -->
     <div class="buttons-grid mt-6">
       <CardComponent
-          class="card-component"
-          title="Rimuovi articolo"
-          :icon="removeProductIcon"
-          @click="navigateToRemoveItem"
+        class="card-component"
+        title="Rimuovi articolo"
+        :icon="removeProductIcon"
+        @click="navigateToRemoveItem"
       />
       <CardComponent
-          class="card-component"
-          title="Usa Buono Spesa"
-          :icon="SaleIcon"
-          @click="usePromotion"
-        />
+        class="card-component"
+        title="Usa Buono Spesa"
+        :icon="SaleIcon"
+        @click="usePromotion"
+      />
       <CardComponent
         class="card-component"
         title="Scrivi Codice Articolo"
@@ -33,7 +33,7 @@
         @click="writeItemCode"
       />
     </div>
-  
+
     <!-- Animated payment button at the bottom -->
     <div class="absolute bottom-6 left-0 right-0 flex justify-center">
       <AnimatedButton
@@ -44,11 +44,10 @@
       />
     </div>
   </div>
-  
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import supabase from '../../config/supabaseClient.js';
 import { useProductStore } from '../../stores/productStore';
@@ -59,11 +58,21 @@ import removeProductIcon from '@/assets/removeproduct_icon.svg';
 import RegisterIcon from '@/assets/register.svg';
 import SaleIcon from '@/assets/sale.svg';
 import KeyboardIcon from '@/assets/keyboard.svg';
+import SpeechSynthesis from '../../utils/speechSynthesis.js'; // Import the speech synthesis utility
+import useVolume from '../../composables/useVolume.js';
 
-
+const { volume, getVolume, setVolume } = useVolume();
 const scannedCode = ref('');
 const router = useRouter();
 const productStore = useProductStore();
+
+watch(volume, (newVolume) => {
+  if (newVolume === 0) {
+    SpeechSynthesis.stop();  // Stop any ongoing speech when volume is 0
+  } else {
+    SpeechSynthesis.setVolume(newVolume / 100);  // Adjust volume of ongoing speech
+  }
+});
 
 const handleScan = async (code) => {
   if (code.trim() === '') return;
@@ -87,6 +96,10 @@ const handleScan = async (code) => {
     if (data && data.length > 0) {
       const product = data[0];
       productStore.addItem(product);
+      // Play the product name and price using the global volume
+      SpeechSynthesis.speak(`${product.name}. Prezzo: ${product.price} euro.`, {
+        volume: getVolume() / 100,
+      });
     } else {
       Swal.fire({
         title: 'Errore!',
@@ -138,14 +151,14 @@ const writeItemCode = async () => {
 };
 
 const proceedToPayment = () => {
-  if(Number(productStore.totalAmount) == 0 && productStore.items.length == 0){
+  if (Number(productStore.totalAmount) == 0 && productStore.items.length == 0) {
     Swal.fire({
-        title: 'Errore!',
-        text: 'Devi acquistare almeno un prodotto',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-  }else{
+      title: 'Errore!',
+      text: 'Devi acquistare almeno un prodotto',
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+  } else {
     router.push({ name: 'BagSelection' });
   }
 };
@@ -180,11 +193,6 @@ const proceedToPayment = () => {
   position: relative; /* Needed for positioning the shape */
   width: 150px; /* Increased size */
   margin: 0 auto; /* Center the image container */
-}
-
-.self-checkout-image {
-  width: 100%; /* Responsive width */
-  height: auto; /* Maintain aspect ratio */
 }
 
 .instruction-text {
