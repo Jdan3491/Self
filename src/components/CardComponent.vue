@@ -4,6 +4,7 @@
     @click="handleClick"
     role="button"
     tabindex="0"
+    v-play-sound="'src/assets/click_sound.mp3'"
   >
     <img :src="icon" :alt="title" class="icon">
     <span class="text">{{ title }}</span>

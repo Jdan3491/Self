@@ -2,7 +2,14 @@
 
 import { ref } from 'vue';
 
-const volume = ref(localStorage.getItem('volume') ? Number(localStorage.getItem('volume')) : 100);
+const DEFAULT_VOLUME = 10; // Valore predefinito del volume
+
+// Crea una variabile reattiva per il volume
+const volume = ref(
+  localStorage.getItem('volume') !== null
+    ? Number(localStorage.getItem('volume'))
+    : DEFAULT_VOLUME // Usa il valore predefinito se non esiste un valore salvato
+);
 
 const setVolume = (newVolume) => {
   volume.value = newVolume;

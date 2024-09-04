@@ -1,9 +1,11 @@
 <template>
   <div class="flex flex-col h-screen w-screen bg-gray-100">
-    <!-- Header Section -->
-    <header class="flex-shrink-0 text-gray-800 p-4 bg-yellow-400">
-      <h2 class="text-2xl font-bold">Metodo di Pagamento</h2>
-    </header>
+
+    <!-- Include Header Component -->
+    <MainHeader
+    leftText="Metodo di Pagamento"
+    :showButton="false"
+  />
 
     <!-- Main Content Section -->
     <main class="flex-grow overflow-auto p-4 flex flex-col items-center justify-center">
@@ -15,7 +17,7 @@
 
       <!-- Payment Method Selection -->
       <div class="payment-methods flex flex-wrap gap-4 justify-center">
-        <div
+        <div v-play-sound="'src/assets/click_sound.mp3'"
           v-for="method in paymentMethods"
           :key="method.value"
           class="card p-4 border rounded-lg shadow-md bg-white cursor-pointer transition-transform duration-300 ease-in-out"
@@ -51,6 +53,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
+import MainHeader from '../../components/MainHeader.vue'
 import AnimatedButton from '../../components/AnimatedButton.vue'
 import { useImgStore } from '@/stores/imgStore'
 import { useProductStore } from '@/stores/productStore' // Import the product store

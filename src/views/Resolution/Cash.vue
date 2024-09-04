@@ -1,10 +1,12 @@
 <template>
   <div class="flex flex-col h-screen w-screen bg-gray-100">
-    <!-- Header Section -->
-    <header class="flex-shrink-0 text-gray-800 p-4 bg-yellow-400">
-      <h1 class="text-3xl font-bold">Pagamento in Contanti</h1>
-      <!-- Increased text size -->
-    </header>
+
+        <!-- Include Header Component -->
+        <MainHeader
+        leftText="Pagamento in Contanti"
+        :showButton="false"
+      />
+    
 
     <!-- Main Content Section -->
     <main class="flex-grow overflow-auto p-4 flex flex-col items-center justify-center">
@@ -71,6 +73,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
+import MainHeader from '../../components/MainHeader.vue'
 import AnimatedButton from '../../components/AnimatedButton.vue'
 import { useProductStore } from '@/stores/productStore'
 import { useDiscountStore } from '@/stores/discountStore'

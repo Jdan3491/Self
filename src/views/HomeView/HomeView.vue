@@ -2,11 +2,10 @@
   <div class="flex flex-col min-h-screen min-w-screen">
     <!-- Include Header Component -->
     <MainHeader
-      leftText="Assistenza"
-      showButton
-      buttonText="Richiedi Supporto"
-      :onButtonClick="requestSupport"
-    />
+    leftText="Assistenza"
+    :showButton="true"
+    :onButtonClick="requestSupport"
+  />
 
     <!-- Main Content Area -->
     <div class="flex flex-1 overflow-hidden">

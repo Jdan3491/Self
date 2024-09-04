@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col h-screen w-screen bg-gray-100">
-    <!-- Header Section -->
-    <header class="flex-shrink-0 text-gray-800 p-4 bg-yellow-400">
-      <h2 class="text-2xl font-bold">Seleziona e Regola la Quantità del Sacchetto</h2>
-    </header>
+    <!-- Include Header Component -->
+     <MainHeader
+     leftText="Seleziona e Regola la Quantità del Sacchetto"
+   />
 
     <!-- Main Content Section -->
     <span class="text-4xl my-4 text-center font-bold"
@@ -12,7 +12,7 @@
     <main class="flex-grow overflow-auto p-4 lg:flex lg:gap-8">
       <!-- Bag Selection Section -->
       <div class="flex flex-col lg:flex-row lg:w-2/3 gap-4">
-        <div
+        <div v-play-sound="'src/assets/click_sound.mp3'"
           v-for="(type, index) in bagTypes"
           :key="type.value"
           class="card w-full lg:w-1/4 h-auto p-4 border rounded-lg shadow-md bg-white cursor-pointer transition-transform duration-300 ease-in-out"
@@ -53,7 +53,7 @@
                 </div>
                 <div class="quantity-controls mt-2">
                   <button @click="changeQuantity(bagType, -1)" style="width: 60px; heigth: 60px">
-                    <span style="font-size: 2rem">-</span>
+                    <span style="font-size: 2rem" v-play-sound="'src/assets/click_sound.mp3'">-</span>
                   </button>
                   <input
                     type="number"
@@ -61,7 +61,7 @@
                     class="w-50"
                   />
                   <button @click="changeQuantity(bagType, 1)" style="width: 60px; heigth: 60px">
-                    <span style="font-size: 2rem">+</span>
+                    <span style="font-size: 2rem" v-play-sound="'src/assets/click_sound.mp3'">+</span>
                   </button>
                 </div>
               </div>
@@ -84,14 +84,14 @@
 
     <!-- Footer Section -->
     <footer class="flex-shrink-0 bg-white p-4 border-t border-gray-200 flex justify-between">
-      <button
+      <button v-play-sound="'src/assets/click_sound.mp3'"
         class="cancel-button text-2xl p-4 rounded-lg shadow-md transition duration-200 ease-in-out"
         @click="cancel"
         aria-label="Annulla"
       >
         Annulla
       </button>
-      <button
+      <button v-play-sound="'src/assets/click_sound.mp3'"
         class="animated-button text-2xl p-4 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-200 ease-in-out"
         @click="confirmSelection"
         aria-label="Avanti"
@@ -107,6 +107,7 @@
 import { ref, computed, onMounted } from 'vue' // Import onMounted for lifecycle hook
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import Swal from 'sweetalert2'
+import MainHeader from '../../components/MainHeader.vue'
 import { useImgStore } from '@/stores/imgStore'
 import { useProductStore } from '@/stores/productStore' // Import the product store
 import { useDiscountStore } from '@/stores/discountStore'

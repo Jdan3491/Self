@@ -41,6 +41,7 @@
         title="Pagamento"
         :onClick="proceedToPayment"
         aria-label="Start"
+        
       />
     </div>
   </div>
@@ -98,10 +99,30 @@ const handleScan = async (code) => {
     if (data && data.length > 0) {
       const product = data[0];
       productStore.addItem(product);
-      // Play the product name and price using the global volume
-      SpeechSynthesis.speak(`${product.name}. Prezzo: ${product.price} euro.`, {
-        volume: getVolume() / 100,
-      });
+
+      // Controlla se il prezzo ha valori decimali
+const priceHasDecimals = product.price % 1 !== 0;
+
+let message;
+
+if (priceHasDecimals) {
+  // Ottieni la parte intera e la parte decimale del prezzo
+  const integerPart = Math.floor(product.price);
+  const decimalPart = Math.round((product.price - integerPart) * 100); // Ottieni i centesimi
+
+  // Costruisci il messaggio per il prezzo con centesimi
+  message = `Prezzo: ${integerPart} euro e ${decimalPart} centesimi.`;
+} else {
+  // Messaggio normale senza centesimi
+  message = `Prezzo: ${product.price} euro.`;
+}
+
+// Play the product name and price using the global volume
+SpeechSynthesis.speak(`${product.name}. ${message}`, {
+  volume: getVolume() / 100,
+});
+
+
     } else {
       Swal.fire({
         title: 'Errore!',

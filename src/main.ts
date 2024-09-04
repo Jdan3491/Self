@@ -9,6 +9,7 @@ import { RouterView } from 'vue-router';
 import router from './router';
 import UnsupportedDevice from './views/UnsupportedDevice/UnsupportedDevice.vue'; // Ensure the path is correct
 import SpeechSynthesis from './utils/speechSynthesis'; // Import the speech synthesis utility
+import playSound from './directives/playSound';
 
 // Define the main application component
 const App = defineComponent({
@@ -54,6 +55,8 @@ app.config.globalProperties.$speakItem = SpeechSynthesis.speak.bind(SpeechSynthe
 
 // Initialize the SpeechSynthesis utility
 SpeechSynthesis.init();
+
+app.directive('play-sound', playSound);
 
 // Mount the app to the DOM
 app.mount('#app');

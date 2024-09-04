@@ -1,9 +1,10 @@
 <template>
   <div class="flex flex-col h-screen w-screen bg-gray-100">
     <!-- Header Section -->
-    <header class="flex-shrink-0 text-gray-800 p-4 bg-yellow-400">
-      <h1 class="text-2xl font-bold">Gestione Codici Sconto</h1>
-    </header>
+    <MainHeader
+    leftText="Gestione Codici Sconto"
+    :showButton="false"
+  />
 
     <!-- Main Content Section -->
     <main class="flex-grow flex items-center justify-center p-4">
@@ -71,6 +72,7 @@ v-if="discountDetails" class="mt-6 p-6 bg-blue-50 rounded-lg shadow-lg border bo
         class="cancel-button text-2xl p-4 rounded-lg shadow-md transition duration-200 ease-in-out"
         @click="goBack"
         aria-label="Indietro"
+        v-play-sound="'src/assets/click_sound.mp3'"
       >
         Indietro
       </button>
@@ -78,6 +80,7 @@ v-if="discountDetails" class="mt-6 p-6 bg-blue-50 rounded-lg shadow-lg border bo
         class="animated-button text-2xl p-4 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-200 ease-in-out"
         @click="applyDiscount"
         aria-label="Applica"
+        v-play-sound="'src/assets/click_sound.mp3'"
       >
         Applica Codice
       </button>
@@ -89,6 +92,7 @@ v-if="discountDetails" class="mt-6 p-6 bg-blue-50 rounded-lg shadow-lg border bo
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
+import MainHeader from '../../components/MainHeader.vue';
 import { useDiscountStore } from '../../stores/discountStore';
 import supabase from '../../config/supabaseClient.js';
 

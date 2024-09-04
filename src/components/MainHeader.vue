@@ -4,25 +4,23 @@
     <div class="left-section flex items-center gap-4">
       <!-- Solo testo -->
       <div v-if="leftText && !showButton" class="text-lg font-semibold text-gray-800">
-        {{ leftText }}
+        <h1>{{ leftText }}</h1>
       </div>
 
       <!-- Testo con Bottone -->
       <div v-if="leftText && showButton" class="flex items-center gap-4">
-        <span class="text-lg font-semibold text-gray-800">{{ leftText }}</span>
         <el-button
           type="text"
           @click="handleLeftButtonClick"
           class="text-gray-800 font-semibold hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
         >
-          {{ buttonText }}
+        <span class="text-lg font-semibold text-gray-800">{{ leftText }}</span>
         </el-button>
       </div>
     </div>
 
     <!-- Controllo del volume -->
     <div class="right-section flex items-center gap-4">
-      <label for="volume" class="text-gray-800">Volume:</label>
       <!-- Barra del Volume con icone -->
       <div class="volume-container flex items-center">
         <img
@@ -76,7 +74,7 @@
         @click="toggleMute"
         class="text-gray-800 font-semibold hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200"
       >
-        {{ isMuted ? 'Unmute' : 'Mute' }}
+        {{ isMuted ? 'Attiva Audio' : 'Disattiva Audio' }}
       </el-button>
     </div>
   </header>
@@ -86,12 +84,32 @@
 import { ref, computed, onMounted } from 'vue';
 import useVolume from '@/composables/useVolume';
 import SpeechSynthesis from '@/utils/speechSynthesis';
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  leftText: {
+    type: String,
+    default: '',
+  },
+  showButton: {
+    type: Boolean,
+    default: false,
+  },
+  buttonText: {
+    type: String,
+    default: '',
+  },
+  onButtonClick: {
+    type: Function,
+    default: null,
+  },
+});
 
 const { volume, setVolume, getVolume } = useVolume();
 
 const barCount = 5;
 const barWidth = 20;
-const barHeight = 20;
+const barHeight = 40;
 const isMuted = ref(false);
 
 // Calcolo delle barre attive basato sul volume
@@ -120,6 +138,13 @@ const toggleMute = () => {
 
   if (isMuted.value) {
     SpeechSynthesis.stop();
+  }
+};
+
+// Gestore del click sul pulsante di sinistra
+const handleLeftButtonClick = () => {
+  if (props.onButtonClick) {
+    props.onButtonClick();
   }
 };
 
