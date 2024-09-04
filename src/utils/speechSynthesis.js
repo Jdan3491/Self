@@ -1,5 +1,3 @@
-// utils/speechSynthesis.js
-
 const SpeechSynthesis = {
   init() {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -9,6 +7,7 @@ const SpeechSynthesis = {
 
     this.voices = [];
     this.currentUtterance = null;
+    this.isSpeaking = false; // Nuovo flag per tenere traccia se sta parlando
     this.loadVoices();
   },
 
@@ -25,9 +24,9 @@ const SpeechSynthesis = {
   speak(text, options = {}) {
     if (!text) return;
 
-    // Verifica se il volume è 0 e non avviare la sintesi vocale
+    // Se il volume è 0, non parlare
     if (options.volume === 0) {
-      console.warn('Volume è impostato su 0. La sintesi vocale non verrà avviata.');
+      this.stop();
       return;
     }
 
@@ -49,22 +48,48 @@ const SpeechSynthesis = {
     // Assegna l'utterance corrente
     this.currentUtterance = utterance;
 
+    // Marca come parlando
+    this.isSpeaking = true;
+
     // Avvia la sintesi vocale
     window.speechSynthesis.speak(utterance);
+
+    // Quando l'utterance è completata, aggiorna lo stato
+    utterance.onend = () => {
+      this.isSpeaking = false;
+    };
   },
 
   stop() {
     if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
       window.speechSynthesis.cancel();
       this.currentUtterance = null;
+      this.isSpeaking = false; // Marca come non parlando
     }
   },
 
   setVolume(volume) {
-    if (this.currentUtterance) {
-      // Imposta solo il volume sull'utterance corrente senza ricreare una nuova
-      this.currentUtterance.volume = Math.min(Math.max(volume, 0), 1); // Limita il volume tra 0 e 1
-      // Non riavviare l'utterance, evitando di ripetere la frase
+    if (volume === 0) {
+      this.stop(); // Ferma la sintesi se il volume è 0
+    } else if (this.currentUtterance) {
+      if (this.isSpeaking) {
+        // Cancelliamo l'utterance corrente e ricreiamo il parlato con il nuovo volume
+        const text = this.currentUtterance.text;
+        const options = {
+          lang: this.currentUtterance.lang,
+          pitch: this.currentUtterance.pitch,
+          rate: this.currentUtterance.rate,
+          volume: Math.min(Math.max(volume, 0), 1), // Limita il volume tra 0 e 1
+          voiceName: this.currentUtterance.voice?.name,
+        };
+        this.stop(); // Ferma l'attuale sintesi
+        this.speak(text, options); // Ricomincia con il nuovo volume
+      } else {
+        // Solo aggiorna il volume senza ripetere se non si sta parlando
+        if (this.currentUtterance) {
+          this.currentUtterance.volume = Math.min(Math.max(volume, 0), 1);
+        }
+      }
     }
   }
 };

@@ -59,6 +59,7 @@ import RegisterIcon from '@/assets/register.svg';
 import SaleIcon from '@/assets/sale.svg';
 import KeyboardIcon from '@/assets/keyboard.svg';
 import SpeechSynthesis from '../../utils/speechSynthesis.js'; // Import the speech synthesis utility
+import AudioAmplifier from '../../utils/audioAmplifier.js';
 import useVolume from '../../composables/useVolume.js';
 
 const { volume, getVolume, setVolume } = useVolume();
@@ -68,9 +69,10 @@ const productStore = useProductStore();
 
 watch(volume, (newVolume) => {
   if (newVolume === 0) {
-    SpeechSynthesis.stop();  // Stop any ongoing speech when volume is 0
+    SpeechSynthesis.stop();
   } else {
-    SpeechSynthesis.setVolume(newVolume / 100);  // Adjust volume of ongoing speech
+    SpeechSynthesis.setVolume(newVolume / 100);
+    AudioAmplifier.setVolume(newVolume / 100);
   }
 });
 
