@@ -44,7 +44,7 @@ const handleClick = () => {
   align-items: center;
   justify-content: center;
   background-color: #fff; /* Mantieni il colore di sfondo giallo */
-  border: 4px solid #ffd814; /* Bordo dello stesso colore del background */
+  border: 6px solid #22C55E; /* Bordo dello stesso colore del background */
   border-radius: 8px; /* Raggio del bordo arrotondato */
   box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ombra leggera */
   text-align: center;
@@ -60,7 +60,7 @@ const handleClick = () => {
 
 .card:focus {
   outline: none;
-  border: 2px solid #ffd814; /* Mantieni il bordo dello stesso colore del background */
+  border: 6px solid #22C55E; /* Mantieni il bordo dello stesso colore del background */
 }
 
 .icon {

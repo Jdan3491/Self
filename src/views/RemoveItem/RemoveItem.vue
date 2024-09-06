@@ -1,21 +1,20 @@
 <template>
   <div class="flex flex-col h-screen w-screen bg-gray-100">
-
     <!-- Include Header Component -->
     <MainHeader
-    leftText="Rimuovi Prodotto"
-    :showButton="false"
-  />
+      leftText="Rimuovi Prodotto"
+      :showButton="false"
+    />
 
     <!-- Main Content Section -->
-    <main class="flex-grow flex items-center justify-center p-4">
+    <main class="flex-grow flex items-center justify-center p-6">
       <!-- Container for Layout -->
-      <div class="flex flex-col lg:flex-row lg:w-2/3 gap-4 max-w-5xl">
+      <div class="flex flex-col lg:flex-row gap-6">
         <!-- Left Column: Instructions -->
-        <div class="flex flex-col items-center justify-center lg:items-start lg:justify-center lg:w-1/2 p-4">
+        <div class="flex flex-col lg:w-1/2 p-4 bg-white rounded-lg shadow-md">
           <div class="instructions text-center lg:text-left">
-            <p class="font-semibold text-lg mb-2">Due Metodi per Rimuovere un Prodotto:</p>
-            <div class="method mb-4 p-4 bg-gray-200 rounded-lg shadow-md">
+            <p class="font-semibold text-lg mb-4">Due Metodi per Rimuovere un Prodotto:</p>
+            <div class="method mb-6 p-4 bg-gray-200 rounded-lg shadow-md">
               <h2 class="font-bold text-xl text-red-500 mb-2">Metodo 1: Inserimento Manuale</h2>
               <p>
                 Inserisci il codice del prodotto nel campo di input sopra e premi 
@@ -37,18 +36,18 @@
         </div>
 
         <!-- Right Column: Logo and Input Field -->
-        <div class="flex flex-col items-center justify-center lg:items-end lg:justify-center lg:w-1/2 p-4">
-          <div class="logo-container mb-4 flex items-center justify-center">
+        <div class="flex flex-col lg:w-1/2 p-4 bg-white rounded-lg shadow-md">
+          <div class="flex justify-center">
             <img
               src="@/assets/removeproduct_icon.svg"
               alt="Remove Product Icon"
               class="logo-image"
             />
           </div>
-          <div class="text-container mb-4 text-center lg:text-right">
-            <h1 class="text-header text-2xl font-bold">Digita il prodotto da rimuovere</h1>
+          <div class="text-container text-center">
+            <h1 class="text-header text-5xl font-bold">Digita il prodotto da rimuovere</h1>
           </div>
-          <div class="input-container">
+          <div class="input-container flex justify-center lg:justify-center mb-6">
             <el-input
               v-model="scannedCode"
               placeholder="Inserisci il codice del prodotto"
@@ -137,60 +136,45 @@ const cancel = () => {
 </script>
 
 <style scoped>
-/* General Layout */
+/* Main Content Section */
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem; /* Padding più ampio per spaziatura */
+}
+
+/* Container for Layout */
 .container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  background-color: #f9f9f9;
-}
-
-/* Header Section */
-header {
-  background-color: #fbbf24; /* Yellow background */
-  color: #333; /* Dark text */
-  padding: 1rem;
-  text-align: center;
-}
-
-header h1 {
-  font-size: 2rem;
-  margin-top: 0.5rem;
-}
-
-/* Main Content */
-main {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  overflow: auto;
+  gap: 1.5rem; /* Spazio tra le colonne in un layout a griglia */
 }
 
 /* Left Column Styles */
 .instructions {
   font-size: 1rem;
-  color: #4b5563; /* Text color for instructions */
+  color: #4b5563; /* Testo delle istruzioni */
 }
 
 .method {
   font-size: 1rem;
-  color: #4b5563; /* Text color for method */
+  color: #4b5563; /* Testo del metodo */
 }
 
 /* Right Column Styles */
 .logo-container {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .logo-image {
-  width: 70%;
+  width: 100%; /* Adatta l'immagine alla larghezza del contenitore */
   max-width: 250px;
   height: auto;
 }
 
 .text-container {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .text-header {
@@ -225,14 +209,5 @@ main {
   border-color: #fa8900;
   box-shadow: 0 0 0 3px rgba(250, 137, 0, 0.3);
   outline: none;
-}
-
-/* Footer Section */
-footer {
-  background-color: #fff;
-  padding: 1rem;
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: space-between;
 }
 </style>

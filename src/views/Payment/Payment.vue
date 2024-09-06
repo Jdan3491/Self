@@ -109,6 +109,7 @@ const confirmPayment = () => {
   }).then((result) => {
     if (result.isConfirmed) {
       // Applica sconti
+      router.push({ name: 'SalesView' });
     } else if (result.dismiss === Swal.DismissReason.cancel) {
       if (selectedMethod.value === 'cash') {
         router.push({ name: 'CashService' })

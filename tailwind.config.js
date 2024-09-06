@@ -11,6 +11,7 @@ export default {
         primary: '#1D4ED8',
         secondary: '#F59E0B',
         accent: '#10B981',
+        darkGreen: '#007B55', 
       },
       fontFamily: {
         // Esempio di aggiunta di font personalizzati

@@ -1,47 +1,41 @@
 <template>
-  <div class="relative flex-1 bg-white p-6 flex flex-col items-center">
-    <!-- Image at the top -->
-    <div class="image-container">
-      <!-- Shape behind the image -->
-      <div class="shape"></div>
-      <img :src="RegisterIcon" alt="Self Checkout Icon" class="self-checkout-image" />
-    </div>
-
-    <!-- Text under the image -->
-    <div class="instruction-text mt-4 text-center">
-      <h1>Esegui la scansione dell'articolo o seleziona una delle opzioni seguenti!</h1>
-    </div>
+  <div class="relative bg-white flex flex-col w-full h-full">
+    <!-- Background SVG -->
+    <div class="absolute inset-0 bg-shop-svg bg-cover bg-center z-0"></div>
 
     <!-- Grid layout for buttons -->
-    <div class="buttons-grid mt-6">
-      <CardComponent
-        class="card-component"
-        title="Rimuovi articolo"
-        :icon="removeProductIcon"
-        @click="navigateToRemoveItem"
-      />
-      <CardComponent
-        class="card-component"
-        title="Usa Buono Spesa"
-        :icon="SaleIcon"
-        @click="usePromotion"
-      />
-      <CardComponent
-        class="card-component"
-        title="Scrivi Codice Articolo"
-        :icon="KeyboardIcon"
-        @click="writeItemCode"
-      />
+    <div class="buttons-grid z-10 mt-6 mb-4 flex-grow">
+      <div class="button-row">
+        <CardComponent
+          class="card-component"
+          title="Rimuovi articolo"
+          :icon="removeProductIcon"
+          @click="navigateToRemoveItem"
+        />
+        <CardComponent
+          class="card-component"
+          title="Usa Buono Spesa"
+          :icon="SaleIcon"
+          @click="usePromotion"
+        />
+      </div>
+      <div class="button-row">
+        <CardComponent
+          class="card-component"
+          title="Scrivi Codice Articolo"
+          :icon="KeyboardIcon"
+          @click="writeItemCode"
+        />
+      </div>
     </div>
 
-    <!-- Animated payment button at the bottom -->
-    <div class="absolute bottom-6 left-0 right-0 flex justify-center">
+    <!-- Payment button at the bottom, not fixed -->
+    <div class="z-10 mb-8 flex justify-center w-full">
       <AnimatedButton
-        class="animated-button text-2xl p-4 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-200 ease-in-out"
+        class="start-button text-2xl p-4 bg-green-700 hover:bg-green-800 text-white rounded-xl shadow-md transform transition duration-300 ease-in-out lg:text-3xl lg:p-6"
         title="Pagamento"
         :onClick="proceedToPayment"
         aria-label="Start"
-        
       />
     </div>
   </div>
@@ -56,7 +50,6 @@ import Swal from 'sweetalert2';
 import AnimatedButton from '../AnimatedButton.vue';
 import CardComponent from '../CardComponent.vue';
 import removeProductIcon from '@/assets/removeproduct_icon.svg';
-import RegisterIcon from '@/assets/register.svg';
 import SaleIcon from '@/assets/sale.svg';
 import KeyboardIcon from '@/assets/keyboard.svg';
 import SpeechSynthesis from '../../utils/speechSynthesis.js'; // Import the speech synthesis utility
@@ -101,28 +94,26 @@ const handleScan = async (code) => {
       productStore.addItem(product);
 
       // Controlla se il prezzo ha valori decimali
-const priceHasDecimals = product.price % 1 !== 0;
+      const priceHasDecimals = product.price % 1 !== 0;
 
-let message;
+      let message;
 
-if (priceHasDecimals) {
-  // Ottieni la parte intera e la parte decimale del prezzo
-  const integerPart = Math.floor(product.price);
-  const decimalPart = Math.round((product.price - integerPart) * 100); // Ottieni i centesimi
+      if (priceHasDecimals) {
+        // Ottieni la parte intera e la parte decimale del prezzo
+        const integerPart = Math.floor(product.price);
+        const decimalPart = Math.round((product.price - integerPart) * 100); // Ottieni i centesimi
 
-  // Costruisci il messaggio per il prezzo con centesimi
-  message = `Prezzo: ${integerPart} euro e ${decimalPart} centesimi.`;
-} else {
-  // Messaggio normale senza centesimi
-  message = `Prezzo: ${product.price} euro.`;
-}
+        // Costruisci il messaggio per il prezzo con centesimi
+        message = `Prezzo: ${integerPart} euro e ${decimalPart} centesimi.`;
+      } else {
+        // Messaggio normale senza centesimi
+        message = `Prezzo: ${product.price} euro.`;
+      }
 
-// Play the product name and price using the global volume
-SpeechSynthesis.speak(`${product.name}. ${message}`, {
-  volume: getVolume() / 100,
-});
-
-
+      // Play the product name and price using the global volume
+      SpeechSynthesis.speak(`${product.name}. ${message}`, {
+        volume: getVolume() / 100,
+      });
     } else {
       Swal.fire({
         title: 'Errore!',
@@ -188,66 +179,59 @@ const proceedToPayment = () => {
 </script>
 
 <style scoped>
+/* Full-screen layout */
 .relative {
   position: relative;
   overflow: hidden; /* Prevents overflow issues */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.shape {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200px; /* Adjust size as needed */
-  height: 200px; /* Adjust size as needed */
-  background-color: #22C55E; /* Light green color */
-  border-radius: 50%; /* Make it circular */
-  transform: translate(-50%, -50%); /* Center the shape */
-  z-index: 1; /* Place it behind the image */
+/* Background SVG */
+.bg-shop-svg {
+  background-image: url('@/assets/shop-background.svg'); /* Replace with the path to your SVG file */
+  background-size: cover;
+  background-position: center;
 }
 
-.self-checkout-image {
-  width: 100%; /* Responsive width */
-  height: auto; /* Maintain aspect ratio */
-  position: relative; /* Required for proper z-index stacking */
-  z-index: 2; /* Ensure this is above the shape */
-}
-
-.image-container {
-  position: relative; /* Needed for positioning the shape */
-  width: 150px; /* Increased size */
-  margin: 0 auto; /* Center the image container */
-}
-
-.instruction-text {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
-  text-align: center; /* Center text */
-}
-
+/* Grid layout for buttons */
 .buttons-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust columns based on screen size */
-  gap: 16px; /* Adjust spacing between buttons */
-  width: 100%;
-  max-width: 100%; /* Ensure it does not overflow */
+  display: flex;
+  flex-direction: column; /* Stack rows vertically */
+  align-items: center; /* Center content horizontally */
+  gap: 16px; /* Spacing between rows */
   padding: 0 16px; /* Add padding to the sides */
-  box-sizing: border-box; /* Include padding in width calculations */
 }
 
-.card-component {
-  text-align: center;
+/* Ensure proper alignment */
+.button-row {
+  display: flex;
+  justify-content: center; /* Center cards in each row */
+  gap: 16px; /* Spacing between cards */
+  width: 100%;
 }
 
-.bottom-6 {
-  bottom: 1.5rem;
+/* Improve Card Components */
+
+/* Button styling */
+.start-button {
+  background-color: #007B55; /* Verde scuro */
+  border: none;
+  padding: 15px 30px;
+  border-radius: 50px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.left-0 {
-  left: 0;
+.start-button:hover {
+  background-color: #005a3b;
+  transform: translateY(-5px);
 }
 
-.right-0 {
-  right: 0;
+.start-button:active {
+  transform: scale(0.98);
 }
 </style>
