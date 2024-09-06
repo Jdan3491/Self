@@ -82,23 +82,22 @@
       </div>
     </main>
 
-    <!-- Footer Section -->
-    <footer class="flex-shrink-0 bg-white p-4 border-t border-gray-200 flex justify-between">
-      <button v-play-sound="'src/assets/click_sound.mp3'"
-        class="cancel-button text-2xl p-4 rounded-lg shadow-md transition duration-200 ease-in-out"
-        @click="cancel"
-        aria-label="Annulla"
-      >
-        Annulla
-      </button>
-      <button v-play-sound="'src/assets/click_sound.mp3'"
-        class="animated-button text-2xl p-4 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-200 ease-in-out"
-        @click="confirmSelection"
-        aria-label="Avanti"
-      >
-        Avanti
-      </button>
-    </footer>
+<FooterComponent
+:button1="{
+  title: 'Indietro',
+  onClick: cancel,
+  ariaLabel: 'Indietro',
+  className: 'bg-gray-700 hover:bg-gray-800 text-white rounded-md'
+}"
+button1Align="left"
+:button2="{
+  title: 'Avanti',
+  onClick: confirmSelection,
+  ariaLabel: 'Avanti',
+  className: 'bg-green-700 hover:bg-green-800 text-white rounded-md'
+}"
+button2Align="right"
+/>
   </div>
 </template>
 
@@ -108,6 +107,7 @@ import { ref, computed, onMounted } from 'vue' // Import onMounted for lifecycle
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import Swal from 'sweetalert2'
 import MainHeader from '../../components/MainHeader.vue'
+import FooterComponent from '../../components/FooterComponent.vue';
 import { useImgStore } from '@/stores/imgStore'
 import { useProductStore } from '@/stores/productStore' // Import the product store
 import { useDiscountStore } from '@/stores/discountStore'
@@ -246,7 +246,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   background-color: #fff; /* Mantieni il colore di sfondo bianco */
-  border: 4px solid #ffd814; /* Bordo dello stesso colore del background */
+  border: 6px solid #22C55E; /* Bordo dello stesso colore del background */
   border-radius: 8px; /* Raggio del bordo arrotondato */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombra leggera */
   text-align: center;
@@ -262,7 +262,7 @@ onMounted(() => {
 
 .card:focus {
   outline: none;
-  border: 2px solid #ffd814; /* Mantieni il bordo dello stesso colore del background */
+  border: 6px solid #22C55E; /* Mantieni il bordo dello stesso colore del background */
 }
 
 /* Stili per le icone */
@@ -287,13 +287,13 @@ onMounted(() => {
 
 .card p.price {
   font-size: 1.25rem; /* Dimensione del testo per il costo */
-  color: #1d4ed8; /* Colore del testo per il costo */
+  color: #22C55E; /* Colore del testo per il costo */
   font-weight: bold; /* Peso del testo per il costo */
 }
 
 /* Stili per le classi condizionali */
 .border-blue-600 {
-  border-color: #1d4ed8; /* Colore del bordo quando selezionato */
+  border-color: #22C55E; /* Colore del bordo quando selezionato */
 }
 
 .bg-blue-50 {
@@ -308,7 +308,7 @@ onMounted(() => {
 }
 
 .quantity-controls button {
-  background-color: #1d4ed8; /* Blue background */
+  background-color: #22C55E; /* Blue background */
   color: #ffffff; /* White text */
   border: none;
   border-radius: 4px;
@@ -319,7 +319,7 @@ onMounted(() => {
 }
 
 .quantity-controls button:hover {
-  background-color: #2563eb; /* Darker blue on hover */
+  background-color: #22C55E; /* Darker blue on hover */
 }
 
 .quantity-controls input {

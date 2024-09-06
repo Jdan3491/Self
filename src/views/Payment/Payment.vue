@@ -31,20 +31,22 @@
     </main>
 
     <!-- Footer Section -->
-    <footer class="flex-shrink-0 bg-white p-4 border-t border-gray-200 flex justify-between">
-      <AnimatedButton
-        class="cancel-button text-4xl p-4 rounded-lg shadow-md transition duration-200 ease-in-out"
-        title="Annulla"
-        :onClick="cancel"
-        aria-label="Annulla"
-      />
-      <AnimatedButton
-        class="animated-button text-4xl p-4 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-200 ease-in-out"
-        title="Conferma Pagamento"
-        :onClick="confirmPayment"
-        aria-label="Conferma Pagamento"
-      />
-    </footer>
+    <FooterComponent
+:button1="{
+  title: 'Annulla',
+  onClick: cancel,
+  ariaLabel: 'Annulla',
+  className: 'bg-gray-700 hover:bg-gray-800 text-white rounded-md'
+}"
+button1Align="left"
+:button2="{
+  title: 'Pagamento',
+  onClick: confirmPayment,
+  ariaLabel: 'Pagamento',
+  className: 'bg-green-700 hover:bg-green-800 text-white rounded-md'
+}"
+button2Align="right"
+/>
   </div>
 </template>
 
@@ -54,6 +56,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 import MainHeader from '../../components/MainHeader.vue'
+import FooterComponent from '../../components/FooterComponent.vue';
 import AnimatedButton from '../../components/AnimatedButton.vue'
 import { useImgStore } from '@/stores/imgStore'
 import { useProductStore } from '@/stores/productStore' // Import the product store

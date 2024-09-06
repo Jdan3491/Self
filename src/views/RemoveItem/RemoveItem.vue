@@ -60,25 +60,22 @@
       </div>
     </main>
 
-    <!-- Footer Section -->
-    <footer class="flex-shrink-0 bg-white p-4 border-t border-gray-200 flex justify-between">
-      <button
-        class="cancel-button text-2xl p-4 rounded-lg shadow-md transition duration-200 ease-in-out"
-        @click="cancel"
-        aria-label="Annulla"
-        v-play-sound="'src/assets/click_sound.mp3'"
-      >
-        Annulla
-      </button>
-      <button
-        class="animated-button text-2xl p-4 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md transition duration-200 ease-in-out"
-        @click="handleScan"
-        aria-label="Rimuovi"
-        v-play-sound="'src/assets/click_sound.mp3'"
-      >
-        Rimuovi Articolo
-      </button>
-    </footer>
+    <FooterComponent
+:button1="{
+  title: 'Indietro',
+  onClick: cancel,
+  ariaLabel: 'Indietro',
+  className: 'bg-gray-700 hover:bg-gray-800 text-white rounded-md'
+}"
+button1Align="left"
+:button2="{
+  title: 'Rimuovi Articolo',
+  onClick: handleScan,
+  ariaLabel: 'Rimuovi Articolo',
+  className: 'bg-green-700 hover:bg-green-800 text-white rounded-md'
+}"
+button2Align="right"
+/>
   </div>
 </template>
 
@@ -88,6 +85,7 @@ import { useRouter } from 'vue-router';
 import { useProductStore } from '../../stores/productStore';
 import Swal from 'sweetalert2';
 import MainHeader from '../../components/MainHeader.vue'
+import FooterComponent from '../../components/FooterComponent.vue';
 
 const router = useRouter();
 const productStore = useProductStore();
