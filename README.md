@@ -1,6 +1,6 @@
-# CASSA AMICA
+# CASSA AMICA SELF
 
-**CASSA AMICA** è un progetto demo sviluppato da Daniele Cantoro. Questo progetto simula una cassa di supermercato e include funzionalità come la rimozione di prodotti tramite inserimento manuale o scansione di codici a barre.
+**CASSA AMICA SELF** è un progetto demo sviluppato da Daniele Cantoro. Questo progetto simula una cassa di supermercato e include funzionalità come la rimozione di prodotti tramite inserimento manuale o scansione di codici a barre.
 
 ## Documentazione
 
