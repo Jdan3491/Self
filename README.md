@@ -1,40 +1,17 @@
-# self
+# CASSA AMICA
 
-Questo è un progetto demo "CASSA AMICA"
-ANIMALE
+**CASSA AMICA** è un progetto demo sviluppato da Daniele Cantoro. Questo progetto simula una cassa di supermercato e include funzionalità come la rimozione di prodotti tramite inserimento manuale o scansione di codici a barre.
 
-## Recommended IDE Setup
+## Documentazione
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Per ulteriori dettagli sulla progettazione, le funzionalità e l'uso del progetto, consulta i documenti allegati. La documentazione è disponibile in formato Word e contiene informazioni dettagliate per comprendere meglio il funzionamento e le specifiche del progetto.
 
-## Type Support for `.vue` Imports in TS
+- [Documentazione del Progetto (Word)](link_al_file_word)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
 
+Installa le dipendenze del progetto eseguendo:
+
 ```sh
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
