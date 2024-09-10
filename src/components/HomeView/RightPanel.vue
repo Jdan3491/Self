@@ -1,5 +1,5 @@
 <template>
-  <div class="relative bg-white flex flex-col w-full h-full">
+  <div class="relative bg-white flex flex-col w-full h-full" @keydown="handleKeydown">
     <!-- Background SVG -->
     <div class="absolute inset-0 bg-shop-svg bg-cover bg-center z-0"></div>
 
@@ -40,10 +40,10 @@
     </div>
   </div>
 </template>
-
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
+import { useTestModeStore } from '@/stores/testModeStore';  // Importa lo store per la modalità di test
 import supabase from '../../config/supabaseClient.js';
 import { useProductStore } from '../../stores/productStore';
 import Swal from 'sweetalert2';
@@ -52,14 +52,17 @@ import CardComponent from '../CardComponent.vue';
 import removeProductIcon from '@/assets/removeproduct_icon.svg';
 import SaleIcon from '@/assets/sale.svg';
 import KeyboardIcon from '@/assets/keyboard.svg';
-import SpeechSynthesis from '../../utils/speechSynthesis.js'; // Import the speech synthesis utility
+import SpeechSynthesis from '../../utils/speechSynthesis.js';
 import AudioAmplifier from '../../utils/audioAmplifier.js';
 import useVolume from '../../composables/useVolume.js';
 
 const { volume, getVolume, setVolume } = useVolume();
 const scannedCode = ref('');
+let lastKeyTime = 0;
+let scanTimeout = null;
 const router = useRouter();
 const productStore = useProductStore();
+const testModeStore = useTestModeStore(); // Usa lo store per determinare se la modalità hardware è attiva
 
 watch(volume, (newVolume) => {
   if (newVolume === 0) {
@@ -93,24 +96,17 @@ const handleScan = async (code) => {
       const product = data[0];
       productStore.addItem(product);
 
-      // Controlla se il prezzo ha valori decimali
       const priceHasDecimals = product.price % 1 !== 0;
-
       let message;
 
       if (priceHasDecimals) {
-        // Ottieni la parte intera e la parte decimale del prezzo
         const integerPart = Math.floor(product.price);
-        const decimalPart = Math.round((product.price - integerPart) * 100); // Ottieni i centesimi
-
-        // Costruisci il messaggio per il prezzo con centesimi
+        const decimalPart = Math.round((product.price - integerPart) * 100);
         message = `Prezzo: ${integerPart} euro e ${decimalPart} centesimi.`;
       } else {
-        // Messaggio normale senza centesimi
         message = `Prezzo: ${product.price} euro.`;
       }
 
-      // Play the product name and price using the global volume
       SpeechSynthesis.speak(`${product.name}. ${message}`, {
         volume: getVolume() / 100,
       });
@@ -132,6 +128,33 @@ const handleScan = async (code) => {
     });
   } finally {
     scannedCode.value = '';
+  }
+};
+
+const handleKeydown = (event) => {
+  // Verifica se la modalità hardware è attiva
+  if (!testModeStore.isHardwareInstalled) {
+    const currentTime = Date.now();
+    const timeDiff = currentTime - lastKeyTime;
+
+    if (timeDiff < 50) {
+      scannedCode.value += event.key;
+    } else {
+      scannedCode.value = event.key;
+    }
+
+    lastKeyTime = currentTime;
+
+    clearTimeout(scanTimeout);
+    scanTimeout = setTimeout(() => {
+      if (scannedCode.value.length > 3) {
+        handleScan(scannedCode.value);
+        scannedCode.value = ''; // Reset del codice scansionato
+      }
+    }, 100);
+  } else {
+    // La modalità hardware non è attiva, quindi esci dalla funzione
+    return;
   }
 };
 
@@ -176,7 +199,16 @@ const proceedToPayment = () => {
     router.push({ name: 'BagSelection' });
   }
 };
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
 </script>
+
 
 <style scoped>
 /* Full-screen layout */

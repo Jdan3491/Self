@@ -118,6 +118,11 @@ const confirmPayment = () => {
         router.push({ name: 'CashService' })
       } else {
         // Page Card Contatless
+        if(selectedMethod.value === 'creditCard'){
+          router.push({ name: '_Contactpass' })
+        } else if(selectedMethod.value === 'paypalIcon'){
+          router.push({ name: '_paypal' })
+        }
       }
     }
   })

@@ -37,6 +37,16 @@ const router = createRouter({
       path: '/sales',
       name: 'SalesView',
       component: import('../views/SalesView/SalesView.vue')
+    },
+    {
+      path: '/.._cpass',
+      name: '_Contactpass',
+      component: import('../views/Resolution/_Contactpass.vue')
+    },
+    {
+      path: '/.._paypal',
+      name: '_paypal',
+      component: import('../views/Resolution/_paypal.vue')
     }
   ]
 })

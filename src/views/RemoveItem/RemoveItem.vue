@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen w-screen bg-gray-100">
+  <div class="flex flex-col h-screen w-screen bg-gray-100" @keydown="handleKeydown">
     <!-- Include Header Component -->
     <MainHeader
       leftText="Rimuovi Prodotto"
@@ -14,7 +14,7 @@
         <div class="flex flex-col lg:w-1/2 p-4 bg-white rounded-lg shadow-md">
           <div class="instructions text-center lg:text-left">
             <p class="font-semibold text-lg mb-4">Due Metodi per Rimuovere un Prodotto:</p>
-            <div class="method mb-6 p-4 bg-gray-200 rounded-lg shadow-md">
+            <div v-if="!testModeStore.isHardwareInstalled" class="method mb-6 p-4 bg-gray-200 rounded-lg shadow-md">
               <h2 class="font-bold text-xl text-red-500 mb-2">Metodo 1: Inserimento Manuale</h2>
               <p>
                 Inserisci il codice del prodotto nel campo di input sopra e premi 
@@ -47,54 +47,61 @@
           <div class="text-container text-center">
             <h1 class="text-header text-5xl font-bold">Digita il prodotto da rimuovere</h1>
           </div>
-          <div class="input-container flex justify-center lg:justify-center mb-6">
+          <div v-if="testModeStore.isHardwareInstalled" class="input-container flex justify-center lg:justify-center mb-6">
             <el-input
               v-model="scannedCode"
               placeholder="Inserisci il codice del prodotto"
-              @keydown.enter.prevent="handleScan"
+              @keydown.enter.prevent="handleManualScan"
               clearable
               class="input-field"
             ></el-input>
+          </div>
+          <div v-else class="text-center p-4 text-lg font-bold text-green-600">
+            <p>Modalità Scanner Attiva: Scansiona un codice a barre per rimuovere il prodotto.</p>
           </div>
         </div>
       </div>
     </main>
 
     <FooterComponent
-:button1="{
-  title: 'Indietro',
-  onClick: cancel,
-  ariaLabel: 'Indietro',
-  className: 'bg-gray-700 hover:bg-gray-800 text-white rounded-md'
-}"
-button1Align="left"
-:button2="{
-  title: 'Rimuovi Articolo',
-  onClick: handleScan,
-  ariaLabel: 'Rimuovi Articolo',
-  className: 'bg-green-700 hover:bg-green-800 text-white rounded-md'
-}"
-button2Align="right"
-/>
+      v-if="testModeStore.isHardwareInstalled"
+      :button1="{
+        title: 'Indietro',
+        onClick: cancel,
+        ariaLabel: 'Indietro',
+        className: 'bg-gray-700 hover:bg-gray-800 text-white rounded-md'
+      }"
+      button1Align="left"
+      :button2="{
+        title: 'Rimuovi Articolo',
+        onClick: handleManualScan,
+        ariaLabel: 'Rimuovi Articolo',
+        className: 'bg-green-700 hover:bg-green-800 text-white rounded-md'
+      }"
+      button2Align="right"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProductStore } from '../../stores/productStore';
+import { useTestModeStore } from '../../stores/testModeStore'; // Importa lo store per la modalità di test
 import Swal from 'sweetalert2';
-import MainHeader from '../../components/MainHeader.vue'
+import MainHeader from '../../components/MainHeader.vue';
 import FooterComponent from '../../components/FooterComponent.vue';
 
 const router = useRouter();
 const productStore = useProductStore();
+const testModeStore = useTestModeStore(); // Usa lo store per determinare se la modalità hardware è attiva
 const scannedCode = ref('');
+let lastKeyTime = 0;
+let scanTimeout = null;
 
-const handleScan = async () => {
-  if (scannedCode.value.trim() === '') return;
-
-  const product = productStore.items.find(item => item.productcode === scannedCode.value);
+// Funzione per gestire la rimozione del prodotto
+const handleRemoveProduct = async (code) => {
+  const product = productStore.items.find(item => item.productcode === code);
 
   if (product) {
     try {
@@ -128,10 +135,53 @@ const handleScan = async () => {
   scannedCode.value = '';
 };
 
+// Funzione per gestire l'inserimento manuale
+const handleManualScan = () => {
+  handleRemoveProduct(scannedCode.value);
+};
+
+// Funzione per gestire la scansione tramite barcode scanner
+const handleKeydown = (event) => {
+  // Verifica se la modalità hardware è attiva
+  if (!testModeStore.isHardwareInstalled) {
+    const currentTime = Date.now();
+    const timeDiff = currentTime - lastKeyTime;
+    console.log('Hardware')
+
+    if (timeDiff < 50) {
+      scannedCode.value += event.key;
+    } else {
+      scannedCode.value = event.key;
+    }
+
+    lastKeyTime = currentTime;
+
+    clearTimeout(scanTimeout);
+    scanTimeout = setTimeout(() => {
+      if (scannedCode.value.length > 3) {
+        handleRemoveProduct(scannedCode.value);
+        scannedCode.value = ''; // Reset del codice scansionato
+      }
+    }, 100);
+  }
+};
+
+// Funzione per il pulsante "Indietro"
 const cancel = () => {
   router.back();
 };
+
+onMounted(() => {
+  // Aggiungi listener per lo scanner solo se la modalità hardware è attiva
+    window.addEventListener('keydown', handleKeydown);
+    console.log(testModeStore.isHardwareInstalled)
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
 </script>
+
 
 <style scoped>
 /* Main Content Section */
