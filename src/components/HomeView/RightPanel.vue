@@ -221,13 +221,6 @@ onBeforeUnmount(() => {
   justify-content: center;
 }
 
-/* Background SVG */
-.bg-shop-svg {
-  background-image: url('@/assets/shop-background.svg'); /* Replace with the path to your SVG file */
-  background-size: cover;
-  background-position: center;
-}
-
 /* Grid layout for buttons */
 .buttons-grid {
   display: flex;
