@@ -17,8 +17,4 @@ export default defineConfig({
     rollupOptions: {
     }
   },
-  server: {
-    port: 3000,
-    strictPort: true
-  }
 })

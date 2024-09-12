@@ -1,0 +1,1 @@
+declare module '../views/HomeView/HomeView.vue';
