@@ -7,7 +7,7 @@ const SpeechSynthesis = {
 
     this.voices = [];
     this.currentUtterance = null;
-    this.isSpeaking = false; // Nuovo flag per tenere traccia se sta parlando
+    this.isSpeaking = false;
     this.loadVoices();
   },
 
@@ -22,15 +22,16 @@ const SpeechSynthesis = {
   },
 
   speak(text, options = {}) {
-    if (!text) return;
+    if (!text) {
+      console.warn('No text provided for speech synthesis.');
+      return;
+    }
 
-    // Se il volume è 0, non parlare
     if (options.volume === 0) {
       this.stop();
       return;
     }
 
-    // Ferma eventuale parlato precedente
     this.stop();
 
     const utterance = new SpeechSynthesisUtterance(text);
@@ -39,22 +40,20 @@ const SpeechSynthesis = {
     utterance.rate = options.rate || 0.9;
     utterance.volume = options.volume || 1;
 
-    // Seleziona una voce, se specificata nelle opzioni
     const voiceName = options.voiceName || 'Google italiano';
     utterance.voice = this.voices.find(
       (voice) => voice.name === voiceName && voice.lang === utterance.lang
     );
 
-    // Assegna l'utterance corrente
-    this.currentUtterance = utterance;
+    if (!utterance.voice) {
+      console.warn(`Voice "${voiceName}" not found.`);
+    }
 
-    // Marca come parlando
+    this.currentUtterance = utterance;
     this.isSpeaking = true;
 
-    // Avvia la sintesi vocale
     window.speechSynthesis.speak(utterance);
 
-    // Quando l'utterance è completata, aggiorna lo stato
     utterance.onend = () => {
       this.isSpeaking = false;
     };
@@ -64,37 +63,27 @@ const SpeechSynthesis = {
     if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
       window.speechSynthesis.cancel();
       this.currentUtterance = null;
-      this.isSpeaking = false; // Marca come non parlando
+      this.isSpeaking = false;
     }
   },
 
   setVolume(volume) {
+    volume = Math.min(Math.max(volume, 0), 1);
+
     if (volume === 0) {
-      this.stop(); // Ferma la sintesi se il volume è 0
+      this.stop();
     } else if (this.currentUtterance) {
       if (this.isSpeaking) {
-        // Cancelliamo l'utterance corrente e ricreiamo il parlato con il nuovo volume
-        const text = this.currentUtterance.text;
-        const options = {
-          lang: this.currentUtterance.lang,
-          pitch: this.currentUtterance.pitch,
-          rate: this.currentUtterance.rate,
-          volume: Math.min(Math.max(volume, 0), 1), // Limita il volume tra 0 e 1
-          voiceName: this.currentUtterance.voice?.name,
-        };
-        this.stop(); // Ferma l'attuale sintesi
-        this.speak(text, options); // Ricomincia con il nuovo volume
+        const { text, lang, pitch, rate, voice } = this.currentUtterance;
+        this.stop();
+        this.speak(text, { lang, pitch, rate, volume, voiceName: voice?.name });
       } else {
-        // Solo aggiorna il volume senza ripetere se non si sta parlando
-        if (this.currentUtterance) {
-          this.currentUtterance.volume = Math.min(Math.max(volume, 0), 1);
-        }
+        this.currentUtterance.volume = volume;
       }
     }
   }
 };
 
-// Inizializza l'utilità di sintesi vocale
 SpeechSynthesis.init();
 
 export default SpeechSynthesis;

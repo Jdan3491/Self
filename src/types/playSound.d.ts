@@ -1,7 +1,7 @@
-// src/types/playSound.d.ts
 
-import { Directive } from 'vue';
 
-declare const playSound: Directive;
-
-export default playSound;
+declare module './directives/playSound' {
+  import { Directive } from 'vue';
+  const playSound: Directive;
+  export default playSound;
+}
