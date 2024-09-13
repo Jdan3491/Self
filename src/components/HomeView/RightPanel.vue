@@ -159,7 +159,7 @@ const handleKeydown = (event) => {
 };
 
 const navigateToRemoveItem = () => {
-  router.push({ name: 'removeitem' });
+  router.push({ name: 'remove-item' });
 };
 
 const usePromotion = () => {
