@@ -12,7 +12,7 @@
     <main class="flex-grow overflow-auto p-4 lg:flex lg:gap-8">
       <!-- Bag Selection Section -->
       <div class="flex flex-col lg:flex-row lg:w-2/3 gap-4">
-        <div v-play-sound="'src/assets/click_sound.mp3'"
+        <div
           v-for="(type, index) in bagTypes"
           :key="type.value"
           class="card w-full lg:w-1/4 h-auto p-4 border rounded-lg shadow-md bg-white cursor-pointer transition-transform duration-300 ease-in-out"
@@ -53,7 +53,7 @@
                 </div>
                 <div class="quantity-controls mt-2">
                   <button @click="changeQuantity(bagType, -1)" style="width: 60px; heigth: 60px">
-                    <span style="font-size: 2rem" v-play-sound="'src/assets/click_sound.mp3'">-</span>
+                    <span style="font-size: 2rem">-</span>
                   </button>
                   <input
                     type="number"
@@ -61,7 +61,7 @@
                     class="w-50"
                   />
                   <button @click="changeQuantity(bagType, 1)" style="width: 60px; heigth: 60px">
-                    <span style="font-size: 2rem" v-play-sound="'src/assets/click_sound.mp3'">+</span>
+                    <span style="font-size: 2rem">+</span>
                   </button>
                 </div>
               </div>

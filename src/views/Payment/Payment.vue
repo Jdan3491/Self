@@ -17,7 +17,7 @@
 
       <!-- Payment Method Selection -->
       <div class="payment-methods flex flex-wrap gap-4 justify-center">
-        <div v-play-sound="'src/assets/click_sound.mp3'"
+        <div
           v-for="method in paymentMethods"
           :key="method.value"
           class="card p-4 border rounded-lg shadow-md bg-white cursor-pointer transition-transform duration-300 ease-in-out"

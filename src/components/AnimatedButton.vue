@@ -3,7 +3,6 @@
     :class="computedClass"
     @click="handleClick"
     :aria-label="ariaLabel"
-    v-play-sound="'src/assets/click_sound.mp3'"
   >
     {{ title }}
   </button>
