@@ -1,3 +1,4 @@
+
 declare module '@/directives/playSound' {
   const playSound: {
     beforeMount(el: HTMLElement, binding: any): void;
