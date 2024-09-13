@@ -1,4 +1,4 @@
-declare module './utils/speechSynthesis' {
+declare module '@/utils/speechSynthesis' {
   interface SpeechOptions {
     lang?: string;
     pitch?: number;

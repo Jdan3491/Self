@@ -7,8 +7,8 @@ import './assets/styles/tailwind.css';
 import 'swiper/swiper-bundle.css';
 import { RouterView } from 'vue-router';
 import router from './router';
-import UnsupportedDevice from './views/UnsupportedDevice/UnsupportedDevice.vue'; // Ensure the path is correct
-import SpeechSynthesis from './utils/speechSynthesis'; // Import the speech synthesis utility
+import UnsupportedDevice from './views/UnsupportedDevice/UnsupportedDevice.vue';
+import SpeechSynthesis from '@/utils/speechSynthesis';
 import playSound from './directives/playSound';
 
 // Define the main application component
