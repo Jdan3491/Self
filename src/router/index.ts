@@ -15,12 +15,12 @@ const router = createRouter({
     },
     {
       path: '/remove-item',
-      name: 'RemoveItem',
+      name: 'removeitem',
       component: import('../views/RemoveItem/RemoveItem.vue')
     },
     {
       path: '/bag-selection',
-      name: 'BagSelection',
+      name: 'bagselection',
       component: import('../views/BagSelection/BagSelection.vue')
     },
     {

@@ -159,7 +159,7 @@ const handleKeydown = (event) => {
 };
 
 const navigateToRemoveItem = () => {
-  router.push({ name: 'RemoveItem' });
+  router.push({ name: 'removeitem' });
 };
 
 const usePromotion = () => {
@@ -196,7 +196,7 @@ const proceedToPayment = () => {
       confirmButtonText: 'OK'
     });
   } else {
-    router.push({ name: 'BagSelection' });
+    router.push({ name: 'bagselection' });
   }
 };
 
