@@ -1,6 +1,5 @@
-// src/types/speechSynthesis.d.ts
 declare module './utils/speechSynthesis' {
-  interface SpeechSynthesisOptions {
+  interface SpeechOptions {
     lang?: string;
     pitch?: number;
     rate?: number;
@@ -10,7 +9,8 @@ declare module './utils/speechSynthesis' {
 
   const SpeechSynthesis: {
     init(): void;
-    speak(text: string, options?: SpeechSynthesisOptions): void;
+    loadVoices(): void;
+    speak(text: string, options?: SpeechOptions): void;
     stop(): void;
     setVolume(volume: number): void;
   };
