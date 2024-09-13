@@ -15,7 +15,7 @@ const router = createRouter({
     },
     {
       path: '/remove-item',
-      name: 'removeitem',
+      name: 'remove-item',
       component: import('../views/RemoveItem/RemoveItem.vue')
     },
     {
