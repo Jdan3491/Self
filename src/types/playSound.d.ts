@@ -1,7 +1,6 @@
-// src/types/playSound.d.ts
-declare module './directives/playSound' {
+declare module '@/directives/playSound' {
   const playSound: {
-    beforeMount(el: HTMLElement, binding: { value: string }): void;
+    beforeMount(el: HTMLElement, binding: any): void;
     unmounted(el: HTMLElement): void;
   };
 

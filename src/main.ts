@@ -9,7 +9,7 @@ import { RouterView } from 'vue-router';
 import router from './router';
 import UnsupportedDevice from './views/UnsupportedDevice/UnsupportedDevice.vue';
 import SpeechSynthesis from '@/utils/speechSynthesis';
-import playSound from './directives/playSound';
+import playSound from '@/directives/playSound';
 
 // Define the main application component
 const App = defineComponent({
