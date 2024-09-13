@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "allowJs": true,
     "paths": {
       "@/*": ["src/*"]
     },

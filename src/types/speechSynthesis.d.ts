@@ -7,13 +7,13 @@ declare module './utils/speechSynthesis' {
     volume?: number;
     voiceName?: string;
   }
-  
+
   const SpeechSynthesis: {
     init(): void;
     speak(text: string, options?: SpeechSynthesisOptions): void;
     stop(): void;
     setVolume(volume: number): void;
   };
-  
+
   export default SpeechSynthesis;
 }
