@@ -17,6 +17,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
     "element-plus": "^2.8.0",
+    "firebase": "^10.13.1",
     "howler": "^2.2.4",
     "lottie-web": "^5.12.2",
     "pinia": "^2.1.7",
